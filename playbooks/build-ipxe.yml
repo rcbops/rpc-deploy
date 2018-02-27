@@ -1,0 +1,110 @@
+---
+# Copyright 2018, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in witing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Gather facts
+  hosts: pxe_hosts
+  gather_facts: "{{ gather_facts | default(true) }}"
+  pre_tasks:
+    - name: Gather variables for each operating system
+      include_vars: "{{ item }}"
+      with_first_found:
+        - "{{ playbook_dir }}/vars/{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ playbook_dir }}/vars/{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ playbook_dir }}/vars/{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ playbook_dir }}/vars/{{ ansible_distribution | lower }}.yml"
+        - "{{ playbook_dir }}/vars/{{ ansible_os_family | lower }}.yml"
+      tags:
+        - always
+  tasks:
+
+    - name: Install iPXE dependencies
+      package:
+        name: "{{ item }}"
+        state: latest
+      with_items: "{{ ipxe_distro_packages }}"
+
+    - name: Checkout latest iPXE sources
+      git:
+        repo: "{{ ipxe_repo }}"
+        dest: "{{ ipxe_source_dir }}"
+        version: "{{ ipxe_branch }}"
+        force: yes
+
+    - name: Copy iPXE embedded script to iPXE source directory
+      template:
+        src: ipxe/ipxe-embed.j2
+        dest: "{{ ipxe_source_dir }}/src/ipxe-embed"
+
+    - name: Touch iPXE config local files
+      file:
+        path: "{{ ipxe_source_dir }}/src/config/local/{{ item }}"
+        state: touch
+      with_items:
+        - console.h
+        - umalloc.h
+        - nap.h
+        - timer.h
+        - branding.h
+        - serial.h
+        - reboot.h
+        - sanboot.h
+        - fault.h
+        - dhcp.h
+        - sideband.h
+        - entropy.h
+        - crypto.h
+        - usb.h
+        - settings.h
+
+    - name: Compile iPXE disks
+#      shell: "make {{ item }} EMBED=ipxe-embed"
+      shell: "make {{ item }}"
+      with_items:
+        - bin/ipxe.iso
+        - bin/ipxe.lkrn
+        - bin/ipxe.usb
+        - bin/ipxe.dsk
+        - bin/ipxe.pxe
+        - bin/undionly.kpxe
+        - bin-x86_64-efi/ipxe.efi
+      args:
+        chdir: "{{ ipxe_source_dir }}/src"
+
+
+    - name: Create iPXE file directory
+      file:
+        path: "{{ tftp_root_dir }}/ipxe"
+        state: directory
+
+    - name: Copy iPXE files to http directory
+      copy:
+        src: "{{ ipxe_source_dir }}/src/bin/{{ item }}"
+        dest: "{{ tftp_root_dir }}/"
+        remote_src: True
+      with_items:
+        - ipxe.iso
+        - ipxe.lkrn
+        - ipxe.usb
+        - ipxe.dsk
+        - ipxe.pxe
+        - undionly.kpxe
+
+    - name: Copy EFI iPXE to directory
+      copy:
+        src: "{{ ipxe_source_dir }}/src/bin-x86_64-efi/{{ item }}"
+        dest: "{{ tftp_root_dir }}/"
+        remote_src: True
+      with_items:
+        - ipxe.efi

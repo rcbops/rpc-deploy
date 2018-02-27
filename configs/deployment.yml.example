@@ -1,0 +1,109 @@
+---
+
+# Global Environment Details
+# These are the details used by all systems
+
+# Name of Deployment Template
+deployment_name: "My RPC Deployment"
+
+# Host Management Network CIDR
+host_cidr: "10.0.60.0/22"
+
+# Containter Network CIDR
+container_cidr: "172.29.236.0/22"
+
+# Container Network VLAN
+container_vlan: "101"
+
+# Storage Network CIDR
+storage_cidr: "172.29.244.0/22"
+
+# Storage VLAN
+storage_vlan: "111"
+
+# TunnelNet CIDR
+tunnel_cidr: "172.29.240.0/22"
+
+# TunnelNet VLAN
+tunnel_vlan: "102"
+
+# Tenant Network CIDR
+tenant_cidr: "10.0.50.0/22"
+
+# Storage Replication CIDR
+storage_replication_cidr: "172.29.248.0/22"
+
+# Storage Replication VLAN
+storage_replication_vlan: 200
+
+# Out of Band Management Network CIDR (for DRAC/iLO)
+obm_cidr: "10.0.50.0/24"
+
+# OBM User
+obm_user: "root"
+
+# OBM Password
+obm_password: "yoursecretpassword"
+
+# Primary Nameserver for Environment
+primary_nameserver: "8.8.8.8"
+
+# Secondary Nameserver for Environment
+secondary_nameserver: "8.8.4.4"
+
+# Server_image to deploy to servers
+server_image: "ubuntu-16.04-amd64"
+
+# Systems domain name
+systems_domain_name: "mydomain.com"
+
+# Set interface that you want DHCP to serve out requests on
+dhcp_interface: "eno1"
+
+# system details
+# used to generate all PXE files
+# these are used to detail and inventory the specific nodes
+# that the OS needs to be deployed to
+#
+# systems: 
+#   infra1.mydomain.com:
+#     # role of server, infra, compute, ceph, etc
+#     # role is used to determine which preseed to pull
+#     role: infra
+#     # Mac Address of server from interface on host network
+#     mac: 00:00:00:00:00:01
+#     # Out of Band ip for host
+#     obm_ip: 10.0.50.5
+#     # container ip for host
+#     container_ip: 172.29.236.5
+#     # host ip for host
+#     host_ip: 10.0.60.5
+#     # tunnelnet ip for host
+#     tunnel_ip: 172.29.240.5
+#     # storage ip for host
+#     storage_ip: 172.29.244.5
+#   compute1.mydomain.com:
+#     role: compute
+#     mac: 00:00:00:00:00:02
+#     ...
+#
+#
+
+# system details
+systems:
+  infra1.mydomain.com:
+    role: 
+    mac: 
+    obm_ip:
+    container_ip:
+    host_ip: 
+    tunnel_ip:
+    storage_ip: 
+  compute1.mydomain.com:
+    role:
+    mac:
+    obm_ip:
+    container_ip:
+    host_ip:
+    tunnel_ip:
+    storage_ip:

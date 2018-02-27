@@ -1,0 +1,39 @@
+#!ipxe
+set esc:hex 1b
+set bold ${esc:string}[1m
+set boldoff ${esc:string}[22m
+set space:hex 20:20
+set space ${space:string}
+set timeout 10
+
+:start
+echo ${bold}Rackspace Private Cloud Bootloader${boldoff} starting...
+prompt --key m --timeout 4000 Hit the ${bold}m${boldoff} key to load default menu... && goto menu || goto boot_mac
+
+:boot_mac
+echo Checking to see if firmware needs to be updated...
+chain --autofree ipxe/${net0/mac:hexhyp}/firmware ||
+echo Checking to see if server needs to be provisioned...
+chain --autofree ipxe/${net0/mac:hexhyp}/provision ||
+echo No actions found... local booting server...
+goto local ||
+goto menu
+
+:menu
+clear choice
+menu Rackspace Private Cloud Bootloader Menu
+item --gap Default:
+item local ${space} Boot from local hdd
+item --gap Tools
+item shell ${space} iPXE shell
+isset ${choice} && set timeout 0 || set timeout 300000
+choose --timeout ${timeout} --default local choice && goto ${choice} || goto local
+
+:local
+echo Booting from local disks ...
+exit 0
+
+:shell
+echo Type "exit" to return to menu.
+shell
+goto menu

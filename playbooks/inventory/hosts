@@ -1,0 +1,30 @@
+################################## ALL HOSTS ##################################
+[all]
+# Local host
+localhost      ansible_connection=local
+
+# Deploy host
+deploy         ansible_connection=local
+
+################################## PXE HOSTS ##################################
+
+# The group "deploy_hosts" is used to define all host machines that will serve
+#  the purpose of deployment
+[deploy_hosts]
+deploy
+
+# The group "pxe_hosts" is used to setup all systems that will be responsible
+#  for PXE boot. This will install all of the needed capabilities to TFTP serve
+#  system images.
+[pxe_hosts]
+deploy
+
+# The group "dhcp_hosts" is used to setup all systems that will be responsible
+#  for DHCP. This is not required as external DHCP could be used.
+[dhcp_hosts]
+deploy
+
+# The group "pxe_servers" is used to create PXE specific configurations for
+#  each host machines.
+[pxe_servers]
+deploy

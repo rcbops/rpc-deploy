@@ -1,0 +1,11 @@
+{% set image_properties = images[vars['server_image']] %}
+#!ipxe
+
+# provisioning file generated for {{ item.key }}
+
+kernel {{ image_properties['image_netboot_kernel_url'] }}
+initrd {{ image_properties['image_netboot_initrd_url'] }}
+{%     if image_properties['image_type'] == 'debian' %}
+imgargs linux hostname={{ item.key }}.{{ systems_domain_name }} {{ image_properties['image_kernel_options'] }} preseed/url=http://{{ tftp_server }}/preseeds/{{ item.value.mac | replace(':', '-') | lower }} preseed/interactive=false netcfg/get_domain={{ systems_domain_name }} initrd=initrd.gz
+{%     endif %}
+boot

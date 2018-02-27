@@ -1,0 +1,57 @@
+#!ipxe
+
+set tftp_server {{ tftp_server }}
+
+:start
+set boot_loader_version 1
+echo Rackspace Private Cloud PXE loader version ${boot_loader_version}
+prompt --key m --timeout 4000 Hit the ${bold}m${boldoff} key to open failsafe menu... && goto failsafe || goto dhcp
+
+:dhcp
+dhcp || goto netconfig
+goto menu
+
+:failsafe
+menu Ecopoiesis Failsafe Menu
+item localboot Boot to local drive
+item netconfig Manual network configuration
+item retry Retry boot
+item debug iPXE Debug Shell
+item reboot Reboot System
+choose failsafe_choice || exit
+goto ${failsafe_choice}
+
+:netconfig
+echo Network Configuration:
+echo Available interfaces...
+ifstat
+imgfree
+echo -n Set network interface number [0 for net0, defaults to 0]: ${} && read net
+isset ${net} || set net 0
+echo -n IP: && read net${net}/ip
+echo -n Subnet mask: && read net${net}/netmask
+echo -n Gateway: && read net${net}/gateway
+echo -n DNS: && read dns
+ifopen net${net}
+echo Attempting chainload of Ecopoiesis...
+goto menu || goto failsafe
+
+:menu
+chain http://${tftp_server}/boot.ipxe
+goto localboot
+
+:localboot
+sanboot --no-describe --drive 0x80 ||
+exit
+
+:retry
+goto start
+
+:reboot
+reboot
+goto start
+
+:debug
+echo Type "exit" to return to menu
+shell
+goto failsafe
