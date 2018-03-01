@@ -11,10 +11,11 @@ echo ${bold}Rackspace Private Cloud Bootloader${boldoff} starting...
 prompt --key m --timeout 4000 Hit the ${bold}m${boldoff} key to load default menu... && goto menu || goto boot_mac
 
 :boot_mac
+echo
 echo Checking to see if firmware needs to be updated...
-chain --autofree ipxe/${net0/mac:hexhyp}/firmware ||
+chain --autofree pxe/${netX/mac:hexhyp}/firmware ||
 echo Checking to see if server needs to be provisioned...
-chain --autofree ipxe/${net0/mac:hexhyp}/provision ||
+chain --autofree pxe/${netX/mac:hexhyp}/provision ||
 echo No actions found... local booting server...
 goto local ||
 goto menu

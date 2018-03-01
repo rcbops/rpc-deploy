@@ -60,6 +60,9 @@ systems_domain_name: "mydomain.com"
 # Set interface that you want DHCP to serve out requests on
 dhcp_interface: "eno1"
 
+# Set the tftp_server address
+tftp_server: 10.0.60.254
+
 # system details
 # used to generate all PXE files
 # these are used to detail and inventory the specific nodes

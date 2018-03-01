@@ -29,7 +29,7 @@ d-i debian-installer/add-kernel-opts string $kernel_options_post
 #############
 
 d-i netcfg/choose_interface select auto
-d-i netcfg/get_hostname string $hostname
+d-i netcfg/get_hostname string {{ item.key }}
 
 #############
 #
@@ -82,8 +82,8 @@ d-i keyboard-configuration/layoutcode string us
 
 d-i mirror/country string manual
 d-i mirror/http/proxy string
-d-i mirror/http/hostname string $http_server
-d-i mirror/http/directory string $install_source_directory
+d-i mirror/http/hostname string {{ default_ubuntu_mirror_hostname }}
+d-i mirror/http/directory string {{ default_ubuntu_mirror_directory }}
 
 #############
 #
@@ -107,6 +107,9 @@ d-i clock-setup/utc boolean true
 # Partitioning
 #
 #############
+
+# Force UEFI mode
+d-i partman-efi/non_efi_system boolean true
 
 # If one of the disks that are going to be automatically partitioned
 # contains an old LVM configuration, the user will normally receive a
