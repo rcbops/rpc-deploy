@@ -193,6 +193,9 @@
       template:
         src: "pxe/tools/hpraid/{{ item.src }}"
         dest: "/var/www/pxe/tools/hpraid/{{ item.dest }}"
+        mode: "0744"
+        owner: root
+        group: root
       with_items:
         - { src: "raid-all.sh.j2", dest: "raid-all.sh" }
         - { src: "raid-mirror.sh.j2", dest: "raid-mirror.sh" }
