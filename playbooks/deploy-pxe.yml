@@ -83,10 +83,18 @@
       notify:
         - restart tftp-hpa
 
-    - name: Drop ipxe default menu
+    - name: Drop ipxe default menu in tftp
       template:
         src: "pxe/tftp/boot.ipxe.j2"
         dest: "/var/lib/tftpboot/boot.ipxe"
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: Drop ipxe default menu in http
+      template:
+        src: "pxe/tftp/boot.ipxe.j2"
+        dest: "/var/www/pxe/boot.ipxe"
         mode: "0644"
         owner: root
         group: root
