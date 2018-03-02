@@ -56,6 +56,7 @@ option ipxe.nfs                         code 41 = unsigned integer 8;
 # Other useful general options
 option arch                             code 93 = unsigned integer 16;
 option conf-file                        code 209 = text;
+option client-architecture              code 93 = unsigned integer 16;
 
 shared-network all-networks {
 {% for dhcp in dhcp_list %}
