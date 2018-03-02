@@ -187,6 +187,22 @@
       when:
         - item.value.role == "ceph"
 
+    - name: Install HP RAID scripts
+      template:
+        src: "pxe/tools/hpraid/{{ item.src }}"
+        dest: "/var/www/pxe/tools/hpraid/{{ item.dest }}"
+      with_items:
+        - { src: "raid-all.sh.j2", dest: "raid-all.sh" }
+        - { src: "raid-mirror.sh.j2", dest: "raid-mirror.sh" }
+
+    - name: Install HP RAID tools
+      copy:
+        src: "pxe/tools/hpraid/hpraid.tar"
+        dest: "/var/www/pxe/tools/hpraid/hpraid.tar"
+        mode: "0644"
+        owner: root
+        group: root
+
     - name: Ensure permissions are correct
       shell: |
         # Fix perms if needed
