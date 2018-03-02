@@ -3,9 +3,6 @@
 #
 # Usage:
 #
-# This Ubuntu Preseed file is meant to be used with Cobbler. It has been
-# tested only on Cobbler 2.4.1. It is a completely unattended install.
-#
 # References:
 #
 # https://help.ubuntu.com/14.04/installation-guide/example-preseed.txt
@@ -20,7 +17,7 @@
 # Use the following option to add additional boot parameters for the
 # installed system (if supported by the bootloader installer).
 # Note: options passed to the installer will be added automatically.
-d-i debian-installer/add-kernel-opts string $kernel_options_post
+# d-i debian-installer/add-kernel-opts string $kernel_options_post
 
 #############
 #
@@ -39,17 +36,8 @@ d-i netcfg/get_hostname string {{ item.key }}
 
 # Command Line 1: This is necessary otherwise you will be prompted to umount /dev/sda. See Ubuntu bug #1347726.
 d-i preseed/early_command string \
-    wget -O- http://$http_server/hpraid/raid-mirror.sh | /bin/sh -s -x $http_server > /root/hpraid.log 2>&1 ; \
+    wget -O- http://{{ tftp_server }}/tools/hpraid/raid-mirror.sh | /bin/sh -s -x {{ tftp_server}} > /root/hpraid.log 2>&1 ; \
     umount /media || true
-
-#############
-#
-# Net Image
-#
-#############
-
-# Required at least for 12.10+
-d-i live-installer/net-image string http://$http_server/cobbler/links/$distro_name/install/filesystem.squashfs
 
 #############
 #
@@ -232,7 +220,7 @@ d-i partman/confirm_nooverwrite boolean true
 
 # Package selection
 tasksel tasksel/first multiselect openssh-server
-d-i pkgsel/include string sudo tcpdump vlan ifenslave xfsprogs lvm2 man bridge-utils
+d-i pkgsel/include string sudo tcpdump vlan ifenslave xfsprogs lvm2 man bridge-utils lldpd
 
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade
@@ -263,14 +251,6 @@ d-i passwd/root-login boolean true
 # Alternatively, to skip creation of a normal user account.
 d-i passwd/make-user boolean false
 
-# The installer will warn about weak passwords. If you are sure you know
-# what you're doing and want to override it, uncomment this.
-d-i user-setup/allow-password-weak boolean true
-
-# Root password, either in clear text
-d-i passwd/root-password password cobbler
-d-i passwd/root-password-again password cobbler
-
 #############
 #
 # Bootloader
@@ -291,13 +271,10 @@ d-i grub-installer/only_debian boolean true
 # Command Line 2: Cobbler overwrites sources.list with its own repos. Put the default Ubuntu sources.list back.
 # Command Line 3: Cobbler API call to turn off netboot.
 d-i preseed/late_command string \
-        sed -i '/PermitRootLogin / s/ .*/ yes/' /target/etc/ssh/sshd_config; \
-        echo GRUB_GFXPAYLOAD_LINUX=text >> /target/etc/default/grub ; chroot /target /usr/sbin/update-grub ; \
-        wget -O- http://$http_server/network/network.sh | chroot /target /bin/sh -s -x $http_server ceph ; \
-        wget -P /target/lib http://$http_server/chef/snoopy.so ; \
-        wget http://$http_server/xenial-sources.list -O /target/etc/apt/sources.list; \
-        chroot /target apt-get update ; \
-        wget http://$http_server/cblr/svc/op/nopxe/system/$system_name -O /dev/null
+    in-target mkdir -p /root/.ssh; \
+    in-target /bin/sh -c "echo '{{ root_public_key | default('# authorized_keys') }}' >> /root/.ssh/authorized_keys";
+    sed -i '/PermitRootLogin / s/ .*/ yes/' /target/etc/ssh/sshd_config; \
+    echo GRUB_GFXPAYLOAD_LINUX=text >> /target/etc/default/grub ; chroot /target /usr/sbin/update-grub
 
 #############
 #
