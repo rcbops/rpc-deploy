@@ -21,4 +21,4 @@ dhcp_list:
     subnet: 10.240.0.0                           # Subnet mask
     default_lease_time: 21600                    # Subnet Default lease time - The default is used if this is not defined
     max_lease_time: 43200                        # Subnet Max lease time - The default is used if this is not defined
-    tftp_server: 10.240.1.3                      # The server hosting the TFTP server - The default is used if this is not defined
+    tftp_server: 10.240.0.13                      # The server hosting the TFTP server - The default is used if this is not defined
