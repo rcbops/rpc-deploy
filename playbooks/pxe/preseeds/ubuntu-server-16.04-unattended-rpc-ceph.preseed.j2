@@ -243,13 +243,15 @@ popularity-contest popularity-contest/participate boolean false
 #
 #############
 
-# Skip creation of a root account (normal user account will be able to
-# use sudo). The default is false; preseed this to true if you want to set
-# a root password.
 d-i passwd/root-login boolean true
-
-# Alternatively, to skip creation of a normal user account.
+d-i passwd/root-password-crypted password !!
 d-i passwd/make-user boolean false
+
+# The root password is disabled by default. In case you want to use a root
+# password, please generate a password with the following command
+#   printf "please-change-password" | mkpasswd -s -m sha-512
+# and update the passwd/root-password-crypted variable accordingly. Furthermore
+# you need to remove the call to "usermod" below.
 
 #############
 #
@@ -272,8 +274,9 @@ d-i grub-installer/only_debian boolean true
 # Command Line 3: Cobbler API call to turn off netboot.
 d-i preseed/late_command string \
     in-target mkdir -p /root/.ssh; \
-    in-target /bin/sh -c "echo '{{ root_public_key | default('# authorized_keys') }}' >> /root/.ssh/authorized_keys";
-    sed -i '/PermitRootLogin / s/ .*/ yes/' /target/etc/ssh/sshd_config; \
+    in-target /bin/sh -c "echo '{{ root_public_key | default('# authorized_keys') }}' >> /root/.ssh/authorized_keys"; \
+    in-target sh -c 'usermod -p "!" root'; \
+    in-target sh -c 'sed -i "s/^#PermitRootLogin.*\$/PermitRootLogin prohibit-password/g" /etc/ssh/sshd_config'; \
     echo GRUB_GFXPAYLOAD_LINUX=text >> /target/etc/default/grub ; chroot /target /usr/sbin/update-grub
 
 #############
