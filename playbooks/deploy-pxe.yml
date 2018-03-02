@@ -97,6 +97,25 @@
         state: directory
       with_dict: "{{ systems }}"
 
+    - name: Ensure firmware files are all systems are removed by default
+      file:
+        path: "/var/lib/tftpboot/pxe/{{ item.value.mac | replace(':', '-') | lower }}/firmware"
+        state: absent
+      with_dict: "{{ systems }}"
+      when:
+        - update_firmware == "false"
+
+    - name: Generate firmware files for all systems
+      template:
+        src: "pxe/tftp/firmware.ipxe.macaddr.j2"
+        dest: "/var/lib/tftpboot/pxe/{{ item.value.mac | replace(':', '-') | lower }}/firmware"
+        mode: "0644"
+        owner: root
+        group: root
+      with_dict: "{{ systems }}"
+      when:
+        - update_firmware == "true"
+
     - name: Ensure provisioning files are all systems are removed by default
       file:
         path: "/var/lib/tftpboot/pxe/{{ item.value.mac | replace(':', '-') | lower }}/provision"

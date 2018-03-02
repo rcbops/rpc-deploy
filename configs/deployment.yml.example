@@ -54,6 +54,9 @@ secondary_nameserver: "8.8.4.4"
 # Server_image to deploy to servers
 server_image: "ubuntu-16.04-amd64"
 
+# firmware_image to load for firmware and utility operations
+firmware_image: "utility"
+
 # Systems domain name
 systems_domain_name: "mydomain.com"
 
