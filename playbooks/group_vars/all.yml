@@ -37,6 +37,13 @@ images:
     image_kernel_options: "auto=true priority=critical"
     image_netboot_kernel_url: "http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/linux"
     image_netboot_initrd_url: "http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/initrd.gz"
+  ubuntu-16.04-amd64-hwe:
+    image_type: "debian"
+    image_os: "ubuntu"
+    image-version: "xenial"
+    image_kernel_options: "auto=true priority=critical"
+    image_netboot_kernel_url: "http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/hwe-netboot/ubuntu-installer/amd64/linux"
+    image_netboot_initrd_url: "http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/hwe-netboot/ubuntu-installer/amd64/initrd.gz"
   ubuntu-14.04-amd64:
     image_type: "debian"
     image_os: "ubuntu"
