@@ -46,6 +46,8 @@
       with_items:
         - /var/www/pxe
         - /var/www/pxe/preseeds
+        - /var/www/pxe/tools
+        - /var/www/pxe/tools/hpraid
         - /var/lib/tftpboot
         - /var/lib/tftpboot/pxe
 
