@@ -88,7 +88,7 @@
         path: "{{ tftp_root_dir }}/ipxe"
         state: directory
 
-    - name: Copy iPXE files to http directory
+    - name: Copy iPXE files to tftp directory
       copy:
         src: "{{ ipxe_source_dir }}/src/bin/{{ item }}"
         dest: "{{ tftp_root_dir }}/"
@@ -101,10 +101,31 @@
         - ipxe.pxe
         - undionly.kpxe
 
-    - name: Copy EFI iPXE to directory
+    - name: Copy EFI iPXE to tftp directory
       copy:
         src: "{{ ipxe_source_dir }}/src/bin-x86_64-efi/{{ item }}"
         dest: "{{ tftp_root_dir }}/"
+        remote_src: True
+      with_items:
+        - ipxe.efi
+
+    - name: Copy iPXE files to http directory
+      copy:
+        src: "{{ ipxe_source_dir }}/src/bin/{{ item }}"
+        dest: "/var/www/pxe/"
+        remote_src: True
+      with_items:
+        - ipxe.iso
+        - ipxe.lkrn
+        - ipxe.usb
+        - ipxe.dsk
+        - ipxe.pxe
+        - undionly.kpxe
+
+    - name: Copy EFI iPXE to http directory
+      copy:
+        src: "{{ ipxe_source_dir }}/src/bin-x86_64-efi/{{ item }}"
+        dest: "/var/www/pxe/"
         remote_src: True
       with_items:
         - ipxe.efi

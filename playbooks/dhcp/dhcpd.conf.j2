@@ -82,7 +82,11 @@ shared-network all-networks {
         # to load iPXE kernel for UEFI arch, and then legacy. if that
         # fails then it attempts to laad basic undionly iPXE kernel
         if exists user-class and ( option user-class = "iPXE" ) {
-            filename "boot.ipxe";
+            filename "http://{{ tftp_server }}/boot.ipxe;
+        # UEFI HTTP Boot
+        } elsif option client-architecture = encode-int ( 16, 16 ) {
+            filename "http://{{ tftp_server }}/ipxe.efi";
+            option vendor-class-identifier "HTTPClient";
         } elsif option arch = 00:07 {
             filename "ipxe.efi";
         } elsif option arch = 00:00 {
