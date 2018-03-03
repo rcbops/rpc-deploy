@@ -1,0 +1,11 @@
+{% set image_properties = images[vars['firmware_image']] %}
+#!ipxe
+
+# raid utility generated for {{ item.key }}
+
+kernel {{ image_properties['image_netboot_kernel_url'] }}
+initrd {{ image_properties['image_netboot_initrd_url'] }}
+{%     if image_properties['image_type'] == 'utility' %}
+imgargs vmlinuz root=live:{{ image_properties['image_netboot_rootfs_url'] }} {{ image_properties['image_kernel_options'] }} BOOTIF=${netX/mac} ip=dhcp playbook=raid ${console} role={{ item.value.role }} initrd=initrd.img
+{%     endif %}
+boot

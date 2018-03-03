@@ -126,6 +126,25 @@
       when:
         - update_firmware == "true"
 
+    - name: Ensure RAID files are all systems are removed by default
+      file:
+        path: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/raid"
+        state: absent
+      with_dict: "{{ systems }}"
+      when:
+        - configure_raid == "false"
+
+    - name: Generate RAID files for all systems
+      template:
+        src: "pxe/tftp/raid.ipxe.macaddr.j2"
+        dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/raid"
+        mode: "0644"
+        owner: root
+        group: root
+      with_dict: "{{ systems }}"
+      when:
+        - configure_raid == "true"
+
     - name: Ensure provisioning files are all systems are removed by default
       file:
         path: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/provision"
