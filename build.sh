@@ -31,6 +31,7 @@ ansible-playbook -vv \
                  -e default_ubuntu_mirror_directory=${DEFAULT_MIRROR_DIR:-"/ubuntu"} \
                  -e @configs/deployment.yml \
                  -e provision_environment=${PROVISION_ENVIRONMENT:-"false"} \
+                 -e configure_raid=${CONFIGURE_RAID:-"false"} \
                  -e update_firmware=${UPDATE_FIRMWARE:-"false"} \
                  --force-handlers \
                  playbooks/site.yml
