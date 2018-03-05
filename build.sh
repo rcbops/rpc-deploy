@@ -27,7 +27,7 @@ ansible-playbook -vv \
                  -e setup_host=${SETUP_HOST:-"true"} \
                  -e setup_pxeboot=${SETUP_PXEBOOT:-"true"} \
                  -e setup_dhcpd=${SETUP_DHCPD:-"true"} \
-                 -e default_ubuntu_mirror_hostname=${DEFAULT_MIRROR_HOSTNAME:-"archive.ubuntu.com"} \
+                 -e default_ubuntu_mirror_hostname=${DEFAULT_MIRROR_HOSTNAME:-"mirror.rackspace.com"} \
                  -e default_ubuntu_mirror_directory=${DEFAULT_MIRROR_DIR:-"/ubuntu"} \
                  -e @configs/deployment.yml \
                  -e provision_environment=${PROVISION_ENVIRONMENT:-"false"} \
