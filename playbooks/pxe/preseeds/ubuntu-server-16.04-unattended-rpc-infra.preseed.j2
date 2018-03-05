@@ -99,6 +99,9 @@ d-i clock-setup/utc boolean true
 #
 #############
 
+# Force UEFI mode
+d-i partman-efi/non_efi_system boolean true
+
 # If one of the disks that are going to be automatically partitioned
 # contains an old LVM configuration, the user will normally receive a
 # warning. This can be preseeded away...
