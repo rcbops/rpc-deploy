@@ -35,9 +35,9 @@ d-i netcfg/get_hostname string {{ item.key }}
 #############
 
 # Command Line 1: This is necessary otherwise you will be prompted to umount /dev/sda. See Ubuntu bug #1347726.
-d-i preseed/early_command string \
-    wget -O- http://{{ tftp_server }}/tools/hpraid/raid-mirror.sh | /bin/sh -s -x {{ tftp_server}} > /root/hpraid.log 2>&1 ; \
-    umount /media || true
+#d-i preseed/early_command string \
+#    wget -O- http://{{ tftp_server }}/tools/hpraid/raid-mirror.sh | /bin/sh -s -x {{ tftp_server}} > /root/hpraid.log 2>&1 ; \
+#    umount /media || true
 
 #############
 #
@@ -269,9 +269,6 @@ d-i grub-installer/only_debian boolean true
 #
 #############
 
-# Command Line 1: Allow root to SSH.
-# Command Line 2: Cobbler overwrites sources.list with its own repos. Put the default Ubuntu sources.list back.
-# Command Line 3: Cobbler API call to turn off netboot.
 d-i preseed/late_command string \
     in-target mkdir -p /root/.ssh; \
     in-target /bin/sh -c "echo '{{ root_public_key | default('# authorized_keys') }}' >> /root/.ssh/authorized_keys"; \

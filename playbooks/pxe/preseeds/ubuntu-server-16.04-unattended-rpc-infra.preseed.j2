@@ -20,7 +20,7 @@
 # Use the following option to add additional boot parameters for the
 # installed system (if supported by the bootloader installer).
 # Note: options passed to the installer will be added automatically.
-d-i debian-installer/add-kernel-opts string $kernel_options_post
+#d-i debian-installer/add-kernel-opts string $kernel_options_post
 
 #############
 #
@@ -29,7 +29,7 @@ d-i debian-installer/add-kernel-opts string $kernel_options_post
 #############
 
 d-i netcfg/choose_interface select auto
-d-i netcfg/get_hostname string $hostname
+d-i netcfg/get_hostname string {{ item.key }}
 
 #############
 #
@@ -38,18 +38,9 @@ d-i netcfg/get_hostname string $hostname
 #############
 
 # Command Line 1: This is necessary otherwise you will be prompted to umount /dev/sda. See Ubuntu bug #1347726.
-d-i preseed/early_command string \
-    wget -O- http://$http_server/hpraid/raid-all.sh | /bin/sh -s -x $http_server > /root/hpraid.log 2>&1 ; \
-    umount /media || true
-
-#############
-#
-# Net Image
-#
-#############
-
-# Required at least for 12.10+
-d-i live-installer/net-image string http://$http_server/cobbler/links/$distro_name/install/filesystem.squashfs
+#d-i preseed/early_command string \
+#    wget -O- http://$http_server/hpraid/raid-all.sh | /bin/sh -s -x $http_server > /root/hpraid.log 2>&1 ; \
+#    umount /media || true
 
 #############
 #
@@ -82,8 +73,8 @@ d-i keyboard-configuration/layoutcode string us
 
 d-i mirror/country string manual
 d-i mirror/http/proxy string
-d-i mirror/http/hostname string $http_server
-d-i mirror/http/directory string $install_source_directory
+d-i mirror/http/hostname string {{ default_ubuntu_mirror_hostname }}
+d-i mirror/http/directory string {{ default_ubuntu_mirror_directory }}
 
 #############
 #
@@ -229,7 +220,7 @@ d-i partman/confirm_nooverwrite boolean true
 
 # Package selection
 tasksel tasksel/first multiselect openssh-server
-d-i pkgsel/include string sudo tcpdump vlan ifenslave xfsprogs lvm2 man bridge-utils
+d-i pkgsel/include string sudo tcpdump vlan ifenslave xfsprogs lvm2 man bridge-utils lldpd
 
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade
@@ -252,21 +243,15 @@ popularity-contest popularity-contest/participate boolean false
 #
 #############
 
-# Skip creation of a root account (normal user account will be able to
-# use sudo). The default is false; preseed this to true if you want to set
-# a root password.
 d-i passwd/root-login boolean true
-
-# Alternatively, to skip creation of a normal user account.
+d-i passwd/root-password-crypted password !!
 d-i passwd/make-user boolean false
 
-# The installer will warn about weak passwords. If you are sure you know
-# what you're doing and want to override it, uncomment this.
-d-i user-setup/allow-password-weak boolean true
-
-# Root password, either in clear text
-d-i passwd/root-password password cobbler
-d-i passwd/root-password-again password cobbler
+# The root password is disabled by default. In case you want to use a root
+# password, please generate a password with the following command
+#   printf "please-change-password" | mkpasswd -s -m sha-512
+# and update the passwd/root-password-crypted variable accordingly. Furthermore
+# you need to remove the call to "usermod" below.
 
 #############
 #
@@ -284,17 +269,12 @@ d-i grub-installer/only_debian boolean true
 #
 #############
 
-# Command Line 1: Allow root to SSH.
-# Command Line 2: Cobbler overwrites sources.list with its own repos. Put the default Ubuntu sources.list back.
-# Command Line 3: Cobbler API call to turn off netboot.
 d-i preseed/late_command string \
-        sed -i '/PermitRootLogin / s/ .*/ yes/' /target/etc/ssh/sshd_config; \
-        echo GRUB_GFXPAYLOAD_LINUX=text >> /target/etc/default/grub ; chroot /target /usr/sbin/update-grub ; \
-        wget -O- http://$http_server/network/network.sh | chroot /target /bin/sh -s -x $http_server control ; \
-        wget -P /target/lib http://$http_server/chef/snoopy.so ; \
-        wget http://$http_server/xenial-sources.list -O /target/etc/apt/sources.list; \
-        chroot /target apt-get update ; \
-        wget http://$http_server/cblr/svc/op/nopxe/system/$system_name -O /dev/null
+    in-target mkdir -p /root/.ssh; \
+    in-target /bin/sh -c "echo '{{ root_public_key | default('# authorized_keys') }}' >> /root/.ssh/authorized_keys"; \
+    in-target sh -c 'usermod -p "!" root'; \
+    in-target sh -c 'sed -i "s/^#PermitRootLogin.*\$/PermitRootLogin prohibit-password/g" /etc/ssh/sshd_config'; \
+    echo GRUB_GFXPAYLOAD_LINUX=text >> /target/etc/default/grub ; chroot /target /usr/sbin/update-grub
 
 #############
 #
