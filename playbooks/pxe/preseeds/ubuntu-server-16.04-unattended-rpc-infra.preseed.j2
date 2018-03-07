@@ -20,7 +20,7 @@
 # Use the following option to add additional boot parameters for the
 # installed system (if supported by the bootloader installer).
 # Note: options passed to the installer will be added automatically.
-#d-i debian-installer/add-kernel-opts string $kernel_options_post
+d-i debian-installer/add-kernel-opts string nomodeset
 
 #############
 #
@@ -28,8 +28,16 @@
 #
 #############
 
-d-i netcfg/choose_interface select auto
+#d-i netcfg/choose_interface select auto
 d-i netcfg/get_hostname string {{ item.key }}
+d-i netcfg/disable_autoconfig boolean true
+d-i netcfg/dhcp_failed note
+d-i netcfg/dhcp_options select Configure network manually
+d-i netcfg/get_ipaddress string {{ item.value.host_ip }}
+d-i netcfg/get_netmask string {{ host_cidr | ipaddr('netmask') }}
+d-i netcfg/get_gateway string {{ host_cidr | ipaddr('1') | ipaddr('address') }}
+d-i netcfg/get_nameservers string {{ primary_nameserver }} {{ secondary_nameserver }}
+d-i netcfg/confirm_static boolean true
 
 #############
 #
@@ -37,10 +45,10 @@ d-i netcfg/get_hostname string {{ item.key }}
 #
 #############
 
-# Command Line 1: This is necessary otherwise you will be prompted to umount /dev/sda. See Ubuntu bug #1347726.
+# early installer command
 #d-i preseed/early_command string \
-#    wget -O- http://$http_server/hpraid/raid-all.sh | /bin/sh -s -x $http_server > /root/hpraid.log 2>&1 ; \
-#    umount /media || true
+#    commmand ; \ 
+#     command 
 
 #############
 #
@@ -52,6 +60,10 @@ d-i debian-installer/locale string en
 d-i debian-installer/country string US
 d-i debian-installer/locale string en_US.UTF-8
 d-i debian-installer/language string en
+
+# Verbose output and no boot splash screen
+d-i debian-installer/quiet  boolean false
+d-i debian-installer/splash boolean false
 
 #############
 #
@@ -99,9 +111,6 @@ d-i clock-setup/utc boolean true
 #
 #############
 
-# Force UEFI mode
-d-i partman-efi/non_efi_system boolean true
-
 # If one of the disks that are going to be automatically partitioned
 # contains an old LVM configuration, the user will normally receive a
 # warning. This can be preseeded away...
@@ -113,7 +122,6 @@ d-i partman-md/device_remove_md boolean true
 # And the same goes for the confirmation to write the lvm partitions.
 d-i partman-lvm/confirm boolean true
 d-i partman-lvm/confirm_nooverwrite boolean true
-
 d-i partman-auto/method string lvm
 d-i partman-auto/disk string /dev/sda
 
@@ -121,11 +129,28 @@ d-i partman-auto/disk string /dev/sda
 # for logical volumes.
 d-i partman-auto-lvm/guided_size string max
 
+# Force UEFI mode
+d-i partman-efi/non_efi_system boolean true
+
+# enforce usage of GPT - a must have to use EFI!
+d-i partman-basicfilesystems/choose_label string gpt
+d-i partman-basicfilesystems/default_label string gpt
+d-i partman-partitioning/choose_label string gpt
+d-i partman-partitioning/default_label string gpt
+d-i partman/choose_label string gpt
+d-i partman/default_label string gpt
+
 d-i partman-auto/choose_recipe select custompartitioning
 d-i partman-auto/expert_recipe string \
       custompartitioning :: \
+              1024 1 1024 fat32                               \
+                      $defaultignore{ }                       \
+                      $iflabel{ gpt }                         \
+                      $reusemethod{ }                         \
+                      method{ efi }                           \
+                      format{ }                               \
+              .                                               \
               1024 1 1024 ext2                                \
-                      $primary{ }                             \
                       $bootable{ }                            \
                       method{ format } format{ }              \
                       use_filesystem{ } filesystem{ ext2 }    \
@@ -135,7 +160,7 @@ d-i partman-auto/expert_recipe string \
               1024 1 100% ext4                                \
                       $primary{ }                             \
                       method{ lvm }                           \
-                      device{ /dev/sda2 }                     \
+                      device{ /dev/sda3 }                     \
                       vg_name{ lxc }                          \
               .                                               \
               8192 1 8192 linux-swap                          \
@@ -212,6 +237,7 @@ d-i partman-auto/expert_recipe string \
 # that you told it what to do using one of the methods above.
 d-i partman-partitioning/confirm_write_new_label boolean true
 d-i partman/choose_partition select finish
+d-i partman-md/confirm boolean true
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
 
@@ -265,6 +291,8 @@ d-i passwd/make-user boolean false
 # This is fairly safe to set, it makes grub install automatically to the MBR
 # if no other operating system is detected on the machine.
 d-i grub-installer/only_debian boolean true
+d-i grub-installer/with_other_os boolean true
+d-i grub-installer/bootdev  string /dev/sda
 
 #############
 #
