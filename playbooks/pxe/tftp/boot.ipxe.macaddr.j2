@@ -6,6 +6,6 @@
 kernel {{ image_properties['image_netboot_kernel_url'] }}
 initrd {{ image_properties['image_netboot_initrd_url'] }}
 {%     if image_properties['image_type'] == 'debian' %}
-imgargs linux hostname={{ item.key }}.{{ systems_domain_name }} {{ image_properties['image_kernel_options'] }} preseed/url=http://{{ tftp_server }}/preseeds/{{ item.value.mac | replace(':', '-') | lower }} preseed/interactive=false netcfg/get_domain={{ systems_domain_name }} role={{ item.value.role }} netcfg/choose_interface=${netX/mac} initrd=initrd.gz
+imgargs linux hostname={{ item.key }}.{{ systems_domain_name }} {{ image_properties['image_kernel_options'] }} preseed/url=http://{{ tftp_server }}/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/preseed preseed/interactive=false netcfg/get_domain={{ systems_domain_name }} role={{ item.value.role }} netcfg/choose_interface=${netX/mac} initrd=initrd.gz
 {%     endif %}
 boot
