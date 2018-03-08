@@ -142,7 +142,7 @@
 
     - name: Generate Preflight files for all systems
       template:
-        src: "pxe/tftp/raid.ipxe.macaddr.j2"
+        src: "pxe/tftp/preflight.ipxe.macaddr.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/preflight"
         mode: "0644"
         owner: root
