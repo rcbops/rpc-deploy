@@ -6,6 +6,6 @@
 kernel {{ image_properties['image_netboot_kernel_url'] }}
 initrd {{ image_properties['image_netboot_initrd_url'] }}
 {%     if image_properties['image_type'] == 'utility' %}
-imgargs vmlinuz root=live:{{ image_properties['image_netboot_rootfs_url'] }} {{ image_properties['image_kernel_options'] }} BOOTIF=${netX/mac} ip=dhcp playbook=raid ${console} role={{ item.value.role }} initrd=initrd.img
+imgargs vmlinuz root=live:{{ image_properties['image_netboot_rootfs_url'] }} {{ image_properties['image_kernel_options'] }} BOOTIF=${netX/mac} ip=dhcp playbook=preflight ${console} role={{ item.value.role }} hpsum_key={{ hpsum_key }} initrd=initrd.img
 {%     endif %}
 boot
