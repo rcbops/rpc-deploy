@@ -73,6 +73,9 @@ tftp_server: 10.0.60.254
 #
 # systems: 
 #   infra1.mydomain.com:
+#     # deployment status, set to true once deployed
+#     # to ensure actions are not ran on the server
+#     deployed: true
 #     # role of server, infra, compute, ceph, etc
 #     # role is used to determine which preseed to pull
 #     role: infra
@@ -98,6 +101,7 @@ tftp_server: 10.0.60.254
 # system details
 systems:
   infra1.mydomain.com:
+    deployed:
     role: 
     mac: 
     obm_ip:
@@ -106,6 +110,7 @@ systems:
     tunnel_ip:
     storage_ip: 
   compute1.mydomain.com:
+    deployed:
     role:
     mac:
     obm_ip:

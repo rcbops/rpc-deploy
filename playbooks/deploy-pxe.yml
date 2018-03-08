@@ -118,8 +118,8 @@
         path: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/firmware"
         state: absent
       with_dict: "{{ systems }}"
-      when:
-        - update_firmware == "false"
+      when: (update_firmware == "false") or
+            (item.value.deployed == true)
 
     - name: Generate firmware files for all systems
       template:
@@ -137,8 +137,8 @@
         path: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/preflight"
         state: absent
       with_dict: "{{ systems }}"
-      when:
-        - preflight == "false"
+      when: (preflight == "false") or
+            (item.value.deployed == true)
 
     - name: Generate Preflight files for all systems
       template:
@@ -150,14 +150,15 @@
       with_dict: "{{ systems }}"
       when:
         - preflight == "true"
+        - item.value.deployed == false
 
     - name: Ensure provisioning files are all systems are removed by default
       file:
         path: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/provision"
         state: absent
       with_dict: "{{ systems }}"
-      when:
-        - provision_environment == "false"
+      when: (provision_environment == "false") or
+            (item.value.deployed == true)
 
     - name: Generate provisioning files for all systems
       template:
@@ -169,6 +170,7 @@
       with_dict: "{{ systems }}"
       when:
         - provision_environment == "true"
+        - item.value.deployed == false
 
     - name: Generate host preseeds for infra roles
       template:
