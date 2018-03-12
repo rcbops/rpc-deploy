@@ -3,11 +3,9 @@
 
 # preflight generated for {{ item.key }}
 
-ip=<client-IP>:[<peer>]:<gateway-IP>:<netmask>:<client_hostname>:<interface>:{none|off|dhcp|on|any|dhcp6|auto6|ibft}[:[<mtu>][:<macaddr>]]
-ip=::::$hostname::dhcp
 kernel {{ image_properties['image_netboot_kernel_url'] }}
 initrd {{ image_properties['image_netboot_initrd_url'] }}
 {%     if image_properties['image_type'] == 'utility' %}
-imgargs vmlinuz root=live:{{ image_properties['image_netboot_rootfs_url'] }} {{ image_properties['image_kernel_options'] }} BOOTIF=${netX/mac} ip=::::{{ item.key }}-utility::dhcp playbook=preflight ${console} role={{ item.value.role }} hpsum_key={{ hpsum_key }} initrd=initrd.img
+imgargs vmlinuz root=live:{{ image_properties['image_netboot_rootfs_url'] }} {{ image_properties['image_kernel_options'] }} BOOTIF=${netX/mac} ip=::::{{ item.key }}-utility::dhcp playbook=preflight ${console} role={{ item.value.role }} hpsum_key={{ hpsum_key }} deploy_host={{ tftp_server }} initrd=initrd.img
 {%     endif %}
 boot
