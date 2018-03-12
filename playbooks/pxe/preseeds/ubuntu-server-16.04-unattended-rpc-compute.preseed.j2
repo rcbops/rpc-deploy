@@ -313,7 +313,10 @@ d-i preseed/late_command string \
     in-target /bin/sh -c "echo '{{ root_public_key | default('# authorized_keys') }}' >> /root/.ssh/authorized_keys"; \
     in-target sh -c 'usermod -p "!" root'; \
     in-target sh -c 'sed -i "s/^#PermitRootLogin.*\$/PermitRootLogin prohibit-password/g" /etc/ssh/sshd_config'; \
-    echo GRUB_GFXPAYLOAD_LINUX=text >> /target/etc/default/grub ; chroot /target /usr/sbin/update-grub
+    in-target sh -c 'wget http://{{ tftp_server }}/deploystate_key -O /root/deploystate_key' ; \
+    in-target sh -c 'chmod 0600 /root/deploystate_key' ; \
+    in-target sh -c 'ssh -o StrictHostKeyChecking=no -i /root/deploystate_key deploystate@{{ tftp_server }} "rm -f {{ item.value.mac | replace(':', '-') | lower }}/provision"' ; \
+    in-target sh -c 'rm -f /root/deploystate_key'
 
 #############
 #
