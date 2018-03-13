@@ -101,16 +101,39 @@
         owner: root
         group: root
 
+    - name: Generate deploy user and keys
+      user:
+        name: deploy
+        home: /var/www/pxe/pxe
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: /var/www/pxe/deploy_key
+
+    - name: Set authorized key took from file for deploy
+      authorized_key:
+        user: deploy
+        state: present
+        key: "{{ lookup('file', '/var/www/pxe/deploy_key.pub') }}"
+
+    - name: Set deploy_key to readable to be downloaded by clients
+      file:
+        path: /var/www/pxe/deploy_key
+        mode: 0644
+
     - name: Generate MAC directories for all systems
       file:
         path: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}"
         state: directory
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
 
     - name: Generate MAC directory configs for all systems
       file:
         path: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs"
         state: directory
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
 
     - name: Ensure firmware files are all systems are removed by default
@@ -126,8 +149,8 @@
         src: "pxe/tftp/firmware.ipxe.macaddr.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/firmware"
         mode: "0644"
-        owner: root
-        group: root
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
       when:
         - update_firmware == "true"
@@ -145,8 +168,8 @@
         src: "pxe/tftp/preflight.ipxe.macaddr.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/preflight"
         mode: "0644"
-        owner: root
-        group: root
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
       when:
         - preflight == "true"
@@ -165,8 +188,8 @@
         src: "pxe/tftp/boot.ipxe.macaddr.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/provision"
         mode: "0644"
-        owner: root
-        group: root
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
       when:
         - provision_environment == "true"
@@ -177,8 +200,8 @@
         src: "pxe/preseeds/ubuntu-server-16.04-unattended-rpc-infra.preseed.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/preseed"
         mode: "0644"
-        owner: root
-        group: root
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
       when:
         - item.value.role == "infra"
@@ -188,8 +211,8 @@
         src: "pxe/preseeds/ubuntu-server-16.04-unattended-rpc-haproxy.preseed.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/preseed"
         mode: "0644"
-        owner: root
-        group: root
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
       when:
         - item.value.role == "haproxy"
@@ -199,8 +222,8 @@
         src: "pxe/preseeds/ubuntu-server-16.04-unattended-rpc-compute.preseed.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/preseed"
         mode: "0644"
-        owner: root
-        group: root
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
       when:
         - item.value.role == "compute"
@@ -210,8 +233,8 @@
         src: "pxe/preseeds/ubuntu-server-16.04-unattended-rpc-ceph.preseed.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/preseed"
         mode: "0644"
-        owner: root
-        group: root
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
       when:
         - item.value.role == "ceph"
