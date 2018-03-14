@@ -305,6 +305,9 @@ d-i preseed/late_command string \
     in-target /bin/sh -c "echo '{{ root_public_key | default('# authorized_keys') }}' >> /root/.ssh/authorized_keys"; \
     in-target sh -c 'usermod -p "!" root'; \
     in-target sh -c 'sed -i "s/^#PermitRootLogin.*\$/PermitRootLogin prohibit-password/g" /etc/ssh/sshd_config'; \
+    in-target sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT=""/g' /etc/default/grub ; \
+    in-target update-grub ; \
+    wget -O- http://{{ tftp_server }}/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/interfaces.sh | chroot /target /bin/sh -s -x ; \
     in-target sh -c 'wget http://{{ tftp_server }}/deploy_key -O /root/deploy_key' ; \
     in-target sh -c 'chmod 0600 /root/deploy_key' ; \
     in-target sh -c 'ssh -o StrictHostKeyChecking=no -i /root/deploy_key deploy@{{ tftp_server }} "rm -f {{ item.value.mac | replace(':', '-') | lower }}/provision"' ; \

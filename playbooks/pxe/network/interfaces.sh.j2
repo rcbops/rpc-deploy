@@ -1,0 +1,24 @@
+#!/bin/bash
+
+ACTIVE_INTERFACE=`ip -o link | grep {{ item.value.mac | lower }} | awk '{print $2}' | sed s/://`
+
+cat > /etc/network/interfaces << EOF
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto ${ACTIVE_INTERFACE}
+iface ${ACTIVE_INTERFACE} inet static
+       address {{ item.value.host_ip }}
+       netmask {{ host_cidr | ipaddr('netmask') }}
+       gateway {{ host_cidr | ipaddr('1') | ipaddr('address') }}
+       # dns-* options are implemented by the resolvconf package, if installed
+       dns-nameservers {{ primary_nameserver }} {{ secondary_nameserver }}
+       dns-search {{ systems_domain_name }}
+EOF

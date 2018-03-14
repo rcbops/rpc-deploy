@@ -195,6 +195,13 @@
         - provision_environment == "true"
         - item.value.deployed == false
 
+    - name: Generate basic static networking generator for all systems
+      template:
+        src: "pxe/network/interfaces.sh.j2"
+        dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/interfaces.sh"
+        mode: "0744"
+      with_dict: "{{ systems }}"
+
     - name: Generate host preseeds for infra roles
       template:
         src: "pxe/preseeds/ubuntu-server-16.04-unattended-rpc-infra.preseed.j2"
