@@ -21,7 +21,7 @@ via the YAML inventory.
 
 Copy the example config and create the deployment.yaml:
 
-   cp configs/deployment.yaml.example configs/deployment.yaml
+    cp configs/deployment.yaml.example configs/deployment.yaml
 
 Edit the file, set up all of the global configurations, and then create an entry under systems
 for each server.
