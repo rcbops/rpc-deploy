@@ -231,6 +231,25 @@
       when:
         - item.value.role == "ceph"
 
+    - name: Create image directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "root"
+        group: "root"
+        mode: "0755"
+      with_items:
+        - "/var/www/pxe/images/utility"
+
+    - name: Retrieve Utility Image
+      get_url:
+        url: "{{ item.url }}"
+        dest: "{{ item.dest }}"
+      with_items:
+         - { url: "{{ images.utility.image_netboot_kernel_url }}", dest: "/var/www/pxe/images/utility/vmlinuz" }
+         - { url: "{{ images.utility.image_netboot_initrd_url }}", dest: "/var/www/pxe/images/utility/initrd.img" }
+         - { url: "{{ images.utility.image_netboot_rootfs_url }}", dest: "/var/www/pxe/images/utility/rootfs.img" }
+
     - name: Ensure permissions are correct
       shell: |
         # Fix perms if needed

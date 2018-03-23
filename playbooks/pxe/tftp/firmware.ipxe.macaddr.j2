@@ -1,11 +1,11 @@
 {% set image_properties = images[vars['firmware_image']] %}
 #!ipxe
 
-# firmware file generated for {{ item.key }}
+# firmware boot file generated for {{ item.key }}
 
-kernel {{ image_properties['image_netboot_kernel_url'] }}
-initrd {{ image_properties['image_netboot_initrd_url'] }}
+kernel http://{{ tftp_server }}/images/utility/vmlinuz
+initrd http://{{ tftp_server }}/images/utility/initrd.img
 {%     if image_properties['image_type'] == 'utility' %}
-imgargs vmlinuz root=live:{{ image_properties['image_netboot_rootfs_url'] }} {{ image_properties['image_kernel_options'] }} BOOTIF=${netX/mac} ip=dhcp playbook=firmware ${console} hpsum_key={{ hpsum_key }} role={{ item.value.role }} deploy_host={{ tftp_server }} initrd=initrd.img
+imgargs vmlinuz root=live:http://{{ tftp_server }}/images/utility/rootfs.img {{ image_properties['image_kernel_options'] }} BOOTIF=${netX/mac} ip=dhcp playbook=firmware ${console} hpsum_key={{ hpsum_key }} role={{ item.value.role }} deploy_host={{ tftp_server }} initrd=initrd.img
 {%     endif %}
 boot
