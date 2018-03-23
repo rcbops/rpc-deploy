@@ -1,0 +1,160 @@
+#!ipxe
+#
+##########################################
+# Rackspace Private Cloud iPXE Boot Loader
+##########################################
+#
+set esc:hex 1b
+set bold ${esc:string}[1m
+set boldoff ${esc:string}[22m
+set fg_gre ${esc:string}[32m
+set fg_cya ${esc:string}[36m
+set fg_whi ${esc:string}[37m
+set version 1.00
+set menu_url https://raw.githubusercontent.com/rcbops/rpc-deploy/master/bootloader/menu.ipxe
+set space:hex 20:20
+set space ${space:string}
+set github_user rcbops
+set github_repo rpc-deploy
+set github_branch master
+set mirror mirror.rackspace.com
+set mirror_base_dir /ubuntu/
+set preseed_repo https://raw.githubusercontent.com/rcbops/rpc-deploy/master/bootloader/preseeds
+set rpc_deploy_utility_release 20180321192419-be49387
+
+:start
+echo ${bold}${fg_gre}rpc-deploy bootloader${fg_whi}v${version}${boldoff}
+prompt --key m --timeout 4000 Hit the ${bold}m${boldoff} key to open failsafe menu... && goto failsafe || goto dhcp
+
+:dhcp
+dhcp || goto netconfig
+goto menu
+
+:netconfig
+echo Network Configuration:
+echo Available interfaces...
+ifstat
+imgfree
+echo -n Set network interface number [0 for net0, defaults to 0]: ${} && read net
+isset ${net} || set net 0
+echo -n IP: && read net${net}/ip
+echo -n Subnet mask: && read net${net}/netmask
+echo -n Gateway: && read net${net}/gateway
+echo -n DNS: && read dns
+ifopen net${net}
+goto menu || goto failsafe
+
+:failsafe
+menu rpc-deploy Failsafe Menu
+item localboot Boot to local drive
+item netconfig Manual network configuration
+item retry Retry boot
+item debug iPXE Debug Shell
+item reboot Reboot System
+choose failsafe_choice || exit
+goto ${failsafe_choice}
+
+:menu
+clear menu
+menu Rackspace Private Cloud Deployment System
+item --gap RPC-OpenStack Deployment Server
+item rpc_pike ${space} RPC-O 16.x (Pike)
+item rpc_newton ${space} RPC-O 14.x (Newton)
+item --gap Deployment Repo on Github - /${github_user}/${github_repo}/tree/${github_branch}
+item github_user ${space} Github User [ ${github_user} ]
+item github_repo_name ${space} Github Repo Name [ ${github_repo} ]
+item github_branch ${space} Github Branch [ ${github_branch} ]
+item --gap Hardware Prep
+item obm ${space} Setup Out of Band Management
+item --gap Tools
+item shell ${space} iPXE shell
+item netinfo ${space} Network card info
+choose menu || goto linux_exit
+iseq ${menu} rpc_newton && set distro xenial && set playbook rpc-newton && goto rpc ||
+iseq ${menu} rpc_pike && set distro xenial && set playbook rpc-pike && goto rpc ||
+echo ${cls}
+goto ${menu} ||
+goto localboot
+
+:github_user
+echo -n Github User: && read github_user
+goto menu
+
+:github_repo_name
+echo -n Github Repo: && read github_repo
+goto menu
+
+:github_branch
+echo -n Github Branch: && read github_branch
+goto menu
+
+:rpc
+imgfree
+set mirrorcfg mirror/suite=${distro} mirror/country=manual mirror/http/hostname=${mirror} mirror/http/directory=${mirror_base_dir}
+set netcfg netcfg/get_ipaddress=${netX/ip} netcfg/get_netmask=${netX/netmask} netcfg/get_gateway=${netX/gateway} netcfg/get_nameservers=${dns} netcfg/disable_autoconfig=true
+set dir ubuntu/dists/${distro}-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64
+set base_url https://raw.githubusercontent.com/${github_user}/${github_repo}/${github_branch}
+kernel http://${mirror}/${dir}/linux ${netcfg} ${mirrorcfg} auto=true priority=critical preseed/url=${preseed_repo}/${playbook}-${distro}-preseed.cfg deploy_url=${base_url} playbook=${playbook} debian-installer/allow_unauthenticated_ssl=true
+initrd http://${mirror}/${dir}/initrd.gz
+boot
+goto menu
+
+:obm
+echo Setup Out of Band Management
+echo This will setup OBM on this server.  You will be prompted
+echo for networking information and username/password for the
+echo OBM:
+echo -n OBM IP Address: && read obm_ip
+echo -n OBM Netmask: && read obm_nm
+echo -n OBM Gateway: && read obm_gw
+echo -n OBM Username: && read obm_usr
+echo -n OBM Password: && read obm_pw
+echo Loading Utility Image and running the OBM playbook:
+echo
+kernel https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/vmlinuz
+initrd https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/initrd.img
+imgargs vmlinuz nomodeset rd.writable.fsimg rd.shell enforcing=0 root=live:https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/rootfs.img BOOTIF=${netX/mac} ip=dhcp playbook=obm role=logging initrd=initrd.img obm_ip=${obm_ip} obm_nm=${obm_nm} obm_gw=${obm_gw} obm_usr=${obm_usr} obm_pw=${obm_pw}
+boot
+goto menu
+
+:netinfo
+menu Network info
+item --gap MAC:
+item mac ${space} ${netX/mac}
+item --gap IP/mask:
+item ip ${space} ${netX/ip}/${netX/netmask}
+item --gap Gateway:
+item gw ${space} ${netX/gateway}
+item --gap Domain:
+item domain ${space} ${netX/domain}
+item --gap DNS:
+item dns ${space} ${netX/dns}
+item --gap DHCP server:
+item dhcpserver ${space} ${netX/dhcp-server}
+item --gap Next-server:
+item nextserver ${space} ${next-server}
+item --gap Filename:
+item filename ${space} ${netX/filename}
+choose empty ||
+goto menu
+
+:shell
+echo Type "exit" to return to menu.
+set menu main_menu
+shell
+goto menu
+
+:localboot
+exit
+
+:retry
+goto start
+
+:reboot
+reboot
+goto start
+
+:debug
+echo Type "exit" to return to menu
+shell
+goto failsafe
