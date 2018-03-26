@@ -12,8 +12,8 @@ addons:
     - syslinux
 before_install:
 - git clone --depth 1 https://github.com/ipxe/ipxe.git ipxe
-install:
 - cd ipxe/src
+script: 
 - make bin/ipxe.dsk bin/ipxe.iso bin/ipxe.lkrn bin/ipxe.usb bin/ipxe.kpxe bin/undionly.kpxe bin-x86_64-efi/ipxe.efi
   EMBED=../../bootloader/ipxe/disks/rpc-deploy
 after_success:
