@@ -12,28 +12,33 @@ addons:
     - syslinux
 before_install:
 - git clone --depth 1 https://github.com/ipxe/ipxe.git ipxe
+- cp bootloader/ipxe/configs/* ipxe/src/config/local
 - cd ipxe/src
 script: 
 - make bin/ipxe.dsk bin/ipxe.iso bin/ipxe.lkrn bin/ipxe.usb bin/ipxe.kpxe bin/undionly.kpxe bin-x86_64-efi/ipxe.efi
   EMBED=../../bootloader/ipxe/disks/rpc-deploy
 after_success:
 - mkdir ../../artifacts
-- cp bin/ipxe.{dsk,iso,lkrn,usb,kpxe,efi} ../../artifacts
-- cp bin/undionly.kpxe ../../artifacts
-- cp bin-x86_64-efi/ipxe.efi ../../artifacts
+- mv bin/ipxe.dsk ../../artifacts/rpc-deploy-bootloader.dsk
+- mv bin/ipxe.iso ../../artifacts/rpc-deploy-bootloader.iso
+- mv bin/ipxe.lkrn ../../artifacts/rpc-deploy-bootloader.lkrn
+- mv bin/ipxe.usb ../../artifacts/rpc-deploy-bootloader.usb
+- mv bin/ipxe.kpxe ../../artifacts/rpc-deploy-bootloader.kpxe
+- mv bin/undionly.kpxe ../../artifacts/rpc-deploy-ipxe-bootloader.kpxe
+- mv bin-x86_64-efi/ipxe.efi ../../artifacts/rpc-deploy-bootloader.efi
 - cd ../../artifacts
 deploy:
   provider: releases
   api_key:
     secure: doiSnvPDXuGp7fPkcj8LX/VdIIaXbUMRxRvoD7f9EeLeVe++PDE+by1NfL3dFg7rRvsRowGZWCF584Gb233GGosYAlVUxszt1uUBgENHJVhvZpQjtEfkfbmS3b2Fs+aFZ47DhrfIX3kRg42G/z93AuWvZRtevAIBcvnYnskh00IZiW23+gRmqXSCto+viW3va2U8nhJMVIWfRLw6A+/KrC79lDgN26dFMXwIlzfhtVhQG/7awaU55CqrhSHLKG4Y4/0gYeQEzkenP2tmah6sa6ynJzsChXpa/4OhG2dHaRWWVv8F78mX6LU4k+bhbHzK9NGbwh6iAnQ2gOPGYAv/JbFZpAwF7Su5VY6b6hnG6Jd5IR3KOVy7USt9ZB5jBT95r3c7UXmXOkng5fVjjS1c3VC3fDEBFcXySvn+HjgX6Os/JxZDjxycc0FJRJZb9vrk1sbnU783MePYeZGO6AsG1rEbj6wH3nWMl0TLgrKkw0AbbT6U5x0E1ii6JVSQvU+XtvMMVkDClyI4zj7qSGrzxvJxMC/oPC9Sau8+CoRoleTJaLj7kw5xgbYkgiRFwcCapstGPor18DsF8sphFSz99Pd0vdqqK6ot+pHSB5TDp30y93mz3TVgB/LjGudbx6VsXusr+/fdhVC1ZrkoqWLMS34RJElEEdEXSlkqMAefx48=
   file:
-  - ipxe.lkrn
-  - ipxe.dsk
-  - ipxe.iso
-  - ipxe.usb
-  - ipxe.kpxe
-  - ipxe.efi
-  - undionly.kpxe 
+  - rpc-deploy-bootloader.dsk
+  - rpc-deploy-bootloader.iso
+  - rpc-deploy-bootloader.lkrn
+  - rpc-deploy-bootloader.usb
+  - rpc-deploy-bootloader.kpxe
+  - rpc-deploy-bootloader.kpxe
+  - rpc-deploy-bootloader.efi
   on:
     repo: rcbops/rpc-deploy
   skip_cleanup: true
