@@ -35,3 +35,4 @@ deploy:
   - undionly.kpxe 
   on:
     repo: rcbops/rpc-deploy
+  skip_cleanup: true
