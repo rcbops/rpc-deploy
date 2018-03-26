@@ -27,6 +27,11 @@ after_success:
 - mv bin/undionly.kpxe ../../artifacts/rpc-deploy-ipxe-bootloader.kpxe
 - mv bin-x86_64-efi/ipxe.efi ../../artifacts/rpc-deploy-bootloader.efi
 - cd ../../artifacts
+before_deploy:
+  # Set up git user name and tag this commit
+  - git config --local user.name "Antony Messerli"
+  - git config --local user.email "amesserl@rackspace.com"
+  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 deploy:
   provider: releases
   api_key:
