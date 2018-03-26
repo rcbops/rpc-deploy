@@ -19,7 +19,8 @@ script:
 after_success:
 - mkdir ../../artifacts
 - cp bin/ipxe.{dsk,iso,lkrn,usb,kpxe,efi} ../../artifacts
-- cp bin/undionly.kpxe ../artifacts
+- cp bin/undionly.kpxe ../../artifacts
+- cp bin-x86_64-efi/ipxe.efi ../../artifacts
 - cd ../../artifacts
 deploy:
   provider: releases
