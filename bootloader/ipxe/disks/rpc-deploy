@@ -23,7 +23,7 @@ set preseed_repo https://raw.githubusercontent.com/rcbops/rpc-deploy/master/boot
 set rpc_deploy_utility_release 20180321192419-be49387
 
 :start
-echo ${bold}${fg_gre}rpc-deploy bootloader${fg_whi}v${version}${boldoff}
+echo ${bold}${fg_gre}rpc-deploy bootloader ${fg_whi}v${version}${boldoff}
 prompt --key m --timeout 4000 Hit the ${bold}m${boldoff} key to open failsafe menu... && goto failsafe || goto dhcp
 
 :dhcp
