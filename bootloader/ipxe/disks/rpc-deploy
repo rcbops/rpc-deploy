@@ -67,6 +67,7 @@ item github_branch ${space} Github Branch [ ${github_branch} ]
 item --gap Hardware Prep
 item obm ${space} Setup Out of Band Management
 item --gap Tools
+item utility ${space} Load Utility LiveOS Image (debug)
 item shell ${space} iPXE shell
 item netinfo ${space} Network card info
 choose menu || goto linux_exit
@@ -99,11 +100,21 @@ initrd http://${mirror}/${dir}/initrd.gz
 boot
 goto menu
 
+:utility
+imgfree
+echo Loading the Utility Live OS iamge in debug mode:
+echo
+kernel https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/vmlinuz
+initrd https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/initrd.img
+imgargs vmlinuz root=live:https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/rootfs.img nomodeset rd.writable.fsimg rd.shell enforcing=0 BOOTIF=${netX/mac} ip=dhcp playbook=debug initrd=initrd.img
+boot
+goto menu
+
 :obm
 echo Setup Out of Band Management
 echo This will setup OBM on this server.  You will be prompted
-echo for networking information and username/password for the
-echo OBM:
+echo for networking information and username/password for the OBM:
+echo
 echo -n OBM IP Address: && read obm_ip
 echo -n OBM Netmask: && read obm_nm
 echo -n OBM Gateway: && read obm_gw
