@@ -139,6 +139,7 @@
       with_dict: "{{ systems }}"
       when:
         - update_firmware == "true"
+        - item.value.deployed == "false"
 
     - name: Ensure Preflight files on all systems are removed by default
       file:
@@ -252,7 +253,7 @@
          - { url: "{{ images.utility.image_netboot_kernel_url }}", dest: "/var/www/pxe/images/utility/vmlinuz" }
          - { url: "{{ images.utility.image_netboot_initrd_url }}", dest: "/var/www/pxe/images/utility/initrd.img" }
          - { url: "{{ images.utility.image_netboot_rootfs_url }}", dest: "/var/www/pxe/images/utility/rootfs.img" }
-      
+
     - name: Ensure permissions are correct
       shell: |
         # Fix perms if needed
