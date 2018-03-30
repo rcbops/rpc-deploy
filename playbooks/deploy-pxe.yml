@@ -185,6 +185,8 @@
         src: "pxe/network/interfaces.sh.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/interfaces.sh"
         mode: "0744"
+        owner: deploy
+        group: deploy
       with_dict: "{{ systems }}"
 
     - name: Generate host preseeds for infra roles
@@ -245,11 +247,12 @@
       get_url:
         url: "{{ item.url }}"
         dest: "{{ item.dest }}"
+        force: yes
       with_items:
          - { url: "{{ images.utility.image_netboot_kernel_url }}", dest: "/var/www/pxe/images/utility/vmlinuz" }
          - { url: "{{ images.utility.image_netboot_initrd_url }}", dest: "/var/www/pxe/images/utility/initrd.img" }
          - { url: "{{ images.utility.image_netboot_rootfs_url }}", dest: "/var/www/pxe/images/utility/rootfs.img" }
-
+      
     - name: Ensure permissions are correct
       shell: |
         # Fix perms if needed
