@@ -55,7 +55,7 @@ look for a configuration directory that matches the MAC address of the host netw
 to load the various states and execute the appropriate script if it's available.  If all scripts have been run,
 then the server will attempt to localboot.  
 
-Preflight will direct the server to update firwmare, configure Out of Band Management, and configure RAID. 
+Preflight will direct the server to update firmware, configure Out of Band Management, and configure RAID. 
 Provision will boot the server into the OS and configure it based on the generated preseed/kickstart.
 
 ### Environment Variables for build.sh
@@ -80,6 +80,9 @@ This tool is useful in fresh deployments to get the initial server off the groun
 in the datacenter so that the remaining operations can be handled remotely.  The latest releases of the
 bootloader are generated on every commit to the rpc-deploy repo and are generated via Travis CI
 [here](https://github.com/rcbops/rpc-deploy/releases/latest).
+
+The deployment repo is a location that contains the deployment.yml which describes the environment. It
+is used for the generation of the PXE configs to automate installation of the environment.
 
 ## Utility image
 
