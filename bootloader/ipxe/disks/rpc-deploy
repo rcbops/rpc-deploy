@@ -65,9 +65,10 @@ item github_user ${space} Github User [ ${github_user} ]
 item github_repo_name ${space} Github Repo Name [ ${github_repo} ]
 item github_branch ${space} Github Branch [ ${github_branch} ]
 item --gap Hardware Prep
-item obm ${space} Setup Out of Band Management
+item obm ${space} Configure Out of Band Management
+item firmware ${space} Update Server Firmware
 item --gap Tools
-item utility ${space} Load Utility LiveOS Image (debug)
+item debug ${space} Load Utility Image (debug)
 item shell ${space} iPXE shell
 item netinfo ${space} Network card info
 choose menu || goto linux_exit
@@ -100,16 +101,6 @@ initrd http://${mirror}/${dir}/initrd.gz
 boot
 goto menu
 
-:utility
-imgfree
-echo Loading the Utility Live OS iamge in debug mode:
-echo
-kernel https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/vmlinuz
-initrd https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/initrd.img
-imgargs vmlinuz root=live:https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/rootfs.img nomodeset rd.writable.fsimg rd.shell enforcing=0 BOOTIF=${netX/mac} ip=dhcp playbook=debug initrd=initrd.img
-boot
-goto menu
-
 :obm
 echo Setup Out of Band Management
 echo This will setup OBM on this server.  You will be prompted
@@ -120,11 +111,19 @@ echo -n OBM Netmask: && read obm_nm
 echo -n OBM Gateway: && read obm_gw
 echo -n OBM Username: && read obm_usr
 echo -n OBM Password: && read obm_pw
-echo Loading Utility Image and running the OBM playbook:
+goto utility
+
+:utility
+:firmware
+:debug
+set utility_playbook ${menu}
+iseq ${utility_playbook} obm && set obm_params obm_ip=${obm_ip} obm_nm=${obm_nm} obm_gw=${obm_gw} obm_usr=${obm_usr} obm_pw=${obm_pw} ||
+imgfree
+echo Loading the Utility Live OS image in ${utility_playbook} mode:
 echo
 kernel https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/vmlinuz
 initrd https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/initrd.img
-imgargs vmlinuz nomodeset rd.writable.fsimg rd.shell enforcing=0 root=live:https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/rootfs.img BOOTIF=${netX/mac} ip=dhcp playbook=obm role=logging initrd=initrd.img obm_ip=${obm_ip} obm_nm=${obm_nm} obm_gw=${obm_gw} obm_usr=${obm_usr} obm_pw=${obm_pw}
+imgargs vmlinuz root=live:https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/rootfs.img nomodeset rd.writable.fsimg rd.shell enforcing=0 BOOTIF=${netX/mac} ip=dhcp role=logging playbook=${utility_playbook} initrd=initrd.img ${obm_params}
 boot
 goto menu
 
