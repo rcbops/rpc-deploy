@@ -1,0 +1,20 @@
+#!ipxe
+
+# iPXE values for {{ item.key }}.{{ systems_domain_name }}
+# Mac Address: {{ item.value.mac | lower }}
+
+set primary_nameserver {{ primary_nameserver }}
+set secondary_nameserver {{ secondary_nameserver }}
+set host_ip {{ item.value.host_ip }}
+set host_nm {{ host_cidr | ipaddr('netmask') }}
+set host_gw {{ host_cidr | ipaddr('1') | ipaddr('address') }}
+set obm_ip {{ item.value.obm_ip }}
+set obm_nm {{ obm_cidr | ipaddr('netmask') }}
+set obm_gw {{ obm_cidr | ipaddr('1') | ipaddr('address') }}
+set obm_user {{ obm_user }}
+set obm_password {{ obm_password }}
+set role {{ item.value.role }}
+set tftp_server {{ tftp_server }}
+set systems_mac {{ item.value.mac | lower }}
+set systems_hostname {{ item.key }}
+set systems_domain_name {{ systems_domain_name }}
