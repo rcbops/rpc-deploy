@@ -66,6 +66,19 @@ Provision will boot the server into the OS and configure it based on the generat
 |PROVISION_ENVIRONMENT|false|Generates OS install files|
 |UPDATE_FIRMWARE|false|Generates configs to update firmware|
 
+## rpc-deploy iPXE Bootloader
+
+[![Build Status](https://travis-ci.org/rcbops/rpc-deploy.svg?branch=master)](https://travis-ci.org/rcbops/rpc-deploy)
+
+The bootloader is an iPXE generated boot disk that contains operator options for setting up the inital
+deployment server of a Rackspace Private Cloud as well as other items used for bring the servers up to
+the desired production specifications.  It includes options for setting up an initial deployment server
+automatically if a deployment.yml is specified, setting up Out of Band Management on the server and
+upating the firmware.  This tool is useful in fresh deployments to get the initial server off the ground
+in the datacenter so that the remaining operations can be handled remotely.  The latest releases of the
+bootloader are generated on every commit to the rpc-deploy repo and are generated via Travis CI
+[here](https://github.com/rcbops/rpc-deploy/releases/latest).
+
 ## Utility image
 
 The [Utility image](https://github.com/rcbops/rpc-deploy-utility-image) is a CentOS LiveOS image that is
