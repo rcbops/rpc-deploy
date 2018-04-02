@@ -57,6 +57,8 @@ goto ${failsafe_choice}
 :menu
 clear menu
 menu Rackspace Private Cloud Deployment System
+item --gap Default:
+item local ${space} Boot from local hdd
 item --gap RPC-OpenStack Deployment Server
 item rpc_pike ${space} RPC-O 16.x (Pike)
 item rpc_newton ${space} RPC-O 14.x (Newton)
@@ -71,7 +73,8 @@ item --gap Tools
 item debug ${space} Load Utility Image (debug)
 item shell ${space} iPXE shell
 item netinfo ${space} Network card info
-choose menu || goto linux_exit
+isset ${menu} && set timeout 0 || set timeout 300000
+choose --timeout ${timeout} --default ${menu} menu || goto localboot
 iseq ${menu} rpc_newton && set distro xenial && set playbook rpc-newton && goto rpc ||
 iseq ${menu} rpc_pike && set distro xenial && set playbook rpc-pike && goto rpc ||
 echo ${cls}
