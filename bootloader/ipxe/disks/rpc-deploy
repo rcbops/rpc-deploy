@@ -21,6 +21,8 @@ set mirror mirror.rackspace.com
 set mirror_base_dir /ubuntu/
 set preseed_repo https://raw.githubusercontent.com/rcbops/rpc-deploy/master/bootloader/preseeds
 set rpc_deploy_utility_release 20180330213337-f915e23
+set config_mode github
+set git_url http://example.com/set/git/repo/location
 
 :start
 echo ${bold}${fg_gre}rpc-deploy bootloader ${fg_whi}v${version}${boldoff}
@@ -62,10 +64,14 @@ item local ${space} Boot from local hdd
 item --gap RPC-OpenStack Deployment Server
 item rpc_pike ${space} RPC-O 16.x (Pike)
 item rpc_newton ${space} RPC-O 14.x (Newton)
-item --gap Deployment Repo on Github - /${github_user}/${github_repo}/tree/${github_branch}
-item github_user ${space} Github User [ ${github_user} ]
-item github_repo_name ${space} Github Repo Name [ ${github_repo} ]
-item github_branch ${space} Github Branch [ ${github_branch} ]
+item --gap Configuration (deployment.yml)
+item change_mode ${space} Configuration Mode: ${config_mode}
+iseq ${config_mode} url && item --gap Deployment git repo URL: ${git_url} ||
+iseq ${config_mode} url && item set_config_url ${space} Set git repo URL ||
+iseq ${config_mode} github && item --gap Deployment Repo on Github - /${github_user}/${github_repo}/tree/${github_branch} ||
+iseq ${config_mode} github && item github_user ${space} Github User [ ${github_user} ] ||
+iseq ${config_mode} github && item github_repo_name ${space} Github Repo Name [ ${github_repo} ] ||
+iseq ${config_mode} github && item github_branch ${space} Github Branch [ ${github_branch} ] ||
 item --gap Hardware Prep
 item obm ${space} Configure Out of Band Management
 item firmware ${space} Update Server Firmware
@@ -80,6 +86,14 @@ iseq ${menu} rpc_pike && set distro xenial && set playbook rpc-pike && goto rpc 
 echo ${cls}
 goto ${menu} ||
 goto localboot
+
+:change_mode
+iseq ${config_mode} url && set config_mode github || set config_mode url
+goto menu
+
+:set_config_url
+echo -n Set URL of Git Repo: && read git_url
+goto menu
 
 :github_user
 echo -n Github User: && read github_user
@@ -98,7 +112,8 @@ imgfree
 set mirrorcfg mirror/suite=${distro} mirror/country=manual mirror/http/hostname=${mirror} mirror/http/directory=${mirror_base_dir}
 set netcfg netcfg/get_ipaddress=${netX/ip} netcfg/get_netmask=${netX/netmask} netcfg/get_gateway=${netX/gateway} netcfg/get_nameservers=${dns} netcfg/disable_autoconfig=true
 set dir ubuntu/dists/${distro}-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64
-set base_url https://raw.githubusercontent.com/${github_user}/${github_repo}/${github_branch}
+isset config_mode github && set base_url https://raw.githubusercontent.com/${github_user}/${github_repo}/${github_branch} ||
+isset config_mode url && set base_url ${git_url} ||
 kernel http://${mirror}/${dir}/linux ${netcfg} ${mirrorcfg} auto=true priority=critical preseed/url=${preseed_repo}/${playbook}-${distro}-preseed.cfg deploy_url=${base_url} playbook=${playbook} debian-installer/allow_unauthenticated_ssl=true
 initrd http://${mirror}/${dir}/initrd.gz
 boot
