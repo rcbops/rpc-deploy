@@ -306,7 +306,7 @@ d-i preseed/late_command string \
     in-target sh -c 'sed -i "s/^#PermitRootLogin.*\$/PermitRootLogin prohibit-password/g" /etc/ssh/sshd_config'; \
     in-target sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT=""/g' /etc/default/grub ; \
     in-target sed -i 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=10/g' /etc/default/grub ; \
-    in-target sed -i 's/GRUB_HIDDEN_TIMEOUT=.*/d' /etc/default/grub ; \
+    in-target sed -i '/^GRUB_HIDDEN_TIMEOUT=.*/d' /etc/default/grub ; \
     in-target sed -i 's/GRUB_HIDDEN_TIMEOUT_QUIET=.*/GRUB_TIMEOUT_STYLE=countdown/g' /etc/default/grub ; \
     in-target update-grub ; \
     wget -O- http://{{ tftp_server }}/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/interfaces.sh | chroot /target /bin/sh -s -x ; \
