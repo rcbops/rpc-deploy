@@ -9,33 +9,6 @@ deployment_name: "My RPC Deployment"
 # Host Management Network CIDR
 host_cidr: "10.0.60.0/22"
 
-# Containter Network CIDR
-container_cidr: "172.29.236.0/22"
-
-# Container Network VLAN
-container_vlan: "101"
-
-# Storage Network CIDR
-storage_cidr: "172.29.244.0/22"
-
-# Storage VLAN
-storage_vlan: "111"
-
-# TunnelNet CIDR
-tunnel_cidr: "172.29.240.0/22"
-
-# TunnelNet VLAN
-tunnel_vlan: "102"
-
-# Tenant Network CIDR
-tenant_cidr: "10.0.50.0/22"
-
-# Storage Replication CIDR
-storage_replication_cidr: "172.29.248.0/22"
-
-# Storage Replication VLAN
-storage_replication_vlan: 200
-
 # Out of Band Management Network CIDR (for DRAC/iLO)
 obm_cidr: "10.0.50.0/24"
 
@@ -83,14 +56,8 @@ tftp_server: 10.0.60.254
 #     mac: 00:00:00:00:00:01
 #     # Out of Band ip for host
 #     obm_ip: 10.0.50.5
-#     # container ip for host
-#     container_ip: 172.29.236.5
 #     # host ip for host
 #     host_ip: 10.0.60.5
-#     # tunnelnet ip for host
-#     tunnel_ip: 172.29.240.5
-#     # storage ip for host
-#     storage_ip: 172.29.244.5
 #   compute1.mydomain.com:
 #     role: compute
 #     mac: 00:00:00:00:00:02
@@ -105,16 +72,10 @@ systems:
     role: 
     mac: 
     obm_ip:
-    container_ip:
     host_ip: 
-    tunnel_ip:
-    storage_ip: 
   compute1.mydomain.com:
     deployed:
     role:
     mac:
     obm_ip:
-    container_ip:
     host_ip:
-    tunnel_ip:
-    storage_ip:
