@@ -3,41 +3,32 @@
 # Global Environment Details
 # These are the details used by all systems
 
-# Name of Deployment Template
-deployment_name: "My RPC Deployment"
+deployment_name: "My RPC Deployment"             # Name of Deployment Template
+host_cidr: "10.0.60.0/24"                        # Host Management Network CIDR
+obm_cidr: "10.0.50.0/24"                         # Out of Band Management Network CIDR (for DRAC/iLO)
+obm_user: "root"                                 # OBM User
+obm_password: "yoursecretpassword"               # OBM Password
+primary_nameserver: "8.8.8.8"                    # Primary Nameserver for Environment
+secondary_nameserver: "8.8.4.4"                  # Secondary Nameserver for Environment
+server_image: "ubuntu-16.04-amd64"               # Server_image to deploy to servers
+firmware_image: "utility"                        # firmware_image to load for firmware and utility operations
+systems_domain_name: "mydomain.com"              # Systems domain name
+tftp_server: 10.0.60.10                          # Set the primary tftp_server address
 
-# Host Management Network CIDR
-host_cidr: "10.0.60.0/22"
+# DHCP Server Settings
+# Settings for generating the DHCP Server configs 
 
-# Out of Band Management Network CIDR (for DRAC/iLO)
-obm_cidr: "10.0.50.0/24"
-
-# OBM User
-obm_user: "root"
-
-# OBM Password
-obm_password: "yoursecretpassword"
-
-# Primary Nameserver for Environment
-primary_nameserver: "8.8.8.8"
-
-# Secondary Nameserver for Environment
-secondary_nameserver: "8.8.4.4"
-
-# Server_image to deploy to servers
-server_image: "ubuntu-16.04-amd64"
-
-# firmware_image to load for firmware and utility operations
-firmware_image: "utility"
-
-# Systems domain name
-systems_domain_name: "mydomain.com"
-
-# Set interface that you want DHCP to serve out requests on
-dhcp_interface: "eno1"
-
-# Set the tftp_server address
-tftp_server: 10.0.60.254
+dhcp_default_lease_time: 21600                   # Default lease time
+dhcp_max_lease_time: 43200                       # Max lease time
+dhcp_interface: "eno1"                           # Set interface that you want DHCP to serve out requests on
+dhcp_list:                                       # - List of DHCP Subnets - These are iterated though and each will be created
+  - netmask: 255.255.255.0                       # Netmask
+    gateway: 10.0.60.1                           # Gateway
+    dns: 8.8.8.8                                 # DNS
+    subnet: 10.0.60.0                            # Subnet mask
+    default_lease_time: 21600                    # Subnet Default lease time - The default is used if this is not defined
+    max_lease_time: 43200                        # Subnet Max lease time - The default is used if this is not defined
+    tftp_server: 10.0.60.10                      # The server hosting the TFTP server - The default is used if this is not defined
 
 # system details
 # used to generate all PXE files
