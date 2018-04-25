@@ -210,7 +210,7 @@
 
     - name: Generate host preseeds for infra roles
       template:
-        src: "pxe/preseeds/ubuntu-server-16.04-unattended-rpc-infra.preseed.j2"
+        src: "pxe/preseeds/{{ bios_mode | lower }}/ubuntu-server-16.04-unattended-rpc-infra.preseed.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/preseed"
         mode: "0644"
         owner: deploy
@@ -221,7 +221,7 @@
 
     - name: Generate host preseeds for haproxy roles
       template:
-        src: "pxe/preseeds/ubuntu-server-16.04-unattended-rpc-haproxy.preseed.j2"
+        src: "pxe/preseeds/{{ bios_mode | lower }}/ubuntu-server-16.04-unattended-rpc-haproxy.preseed.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/preseed"
         mode: "0644"
         owner: deploy
@@ -232,7 +232,7 @@
 
     - name: Generate host preseeds for compute roles
       template:
-        src: "pxe/preseeds/ubuntu-server-16.04-unattended-rpc-compute.preseed.j2"
+        src: "pxe/preseeds/{{ bios_mode | lower }}/ubuntu-server-16.04-unattended-rpc-compute.preseed.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/preseed"
         mode: "0644"
         owner: deploy
@@ -243,7 +243,7 @@
    
     - name: Generate host preseeds for ceph roles
       template:
-        src: "pxe/preseeds/ubuntu-server-16.04-unattended-rpc-ceph.preseed.j2"
+        src: "pxe/preseeds/{{ bios_mode | lower }}/ubuntu-server-16.04-unattended-rpc-ceph.preseed.j2"
         dest: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}/configs/preseed"
         mode: "0644"
         owner: deploy

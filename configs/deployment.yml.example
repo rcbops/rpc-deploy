@@ -10,6 +10,7 @@ obm_user: "root"                                 # OBM User
 obm_password: "yoursecretpassword"               # OBM Password
 primary_nameserver: "8.8.8.8"                    # Primary Nameserver for Environment
 secondary_nameserver: "8.8.4.4"                  # Secondary Nameserver for Environment
+bios_mode: "UEFI"                                # BIOS Mode - UEFI or Legacy, used to pull different OS configs
 server_image: "ubuntu-16.04-amd64"               # Server_image to deploy to servers
 firmware_image: "utility"                        # firmware_image to load for firmware and utility operations
 systems_domain_name: "mydomain.com"              # Systems domain name

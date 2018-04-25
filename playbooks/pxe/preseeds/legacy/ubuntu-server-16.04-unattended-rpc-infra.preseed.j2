@@ -1,5 +1,5 @@
 #
-# Ubuntu Server 16.04 Preseed for compute role
+# Ubuntu Server 16.04 Preseed for infra role (Legacy)
 #
 
 #############
@@ -120,27 +120,9 @@ d-i partman-auto/disk string /dev/sda
 # for logical volumes.
 d-i partman-auto-lvm/guided_size string max
 
-# Force UEFI mode
-d-i partman-efi/non_efi_system boolean true
-
-# enforce usage of GPT - a must have to use EFI!
-d-i partman-basicfilesystems/choose_label string gpt
-d-i partman-basicfilesystems/default_label string gpt
-d-i partman-partitioning/choose_label string gpt
-d-i partman-partitioning/default_label string gpt
-d-i partman/choose_label string gpt
-d-i partman/default_label string gpt
-
 d-i partman-auto/choose_recipe select custompartitioning
 d-i partman-auto/expert_recipe string \
       custompartitioning :: \
-              1024 1 1024 fat32                               \
-                      $defaultignore{ }                       \
-                      $iflabel{ gpt }                         \
-                      $reusemethod{ }                         \
-                      method{ efi }                           \
-                      format{ }                               \
-              .                                               \
               1024 1 1024 ext2                                \
                       $bootable{ }                            \
                       method{ format } format{ }              \
@@ -151,7 +133,7 @@ d-i partman-auto/expert_recipe string \
               1024 1 100% ext4                                \
                       $primary{ }                             \
                       method{ lvm }                           \
-                      device{ /dev/sda3 }                     \
+                      device{ /dev/sda2 }                     \
                       vg_name{ lxc }                          \
               .                                               \
               8192 1 8192 linux-swap                          \
@@ -167,21 +149,13 @@ d-i partman-auto/expert_recipe string \
                       label{ root }                           \
                       mountpoint{ / }                         \
               .                                               \
-              5120 1 5120 ext4                                \
+              256000 1 256000 ext4                            \
                       $lvmok{ } in_vg{ lxc }                  \
                       lv_name{ openstack00 }                  \
                       method{ format } format{ }              \
                       use_filesystem{ } filesystem{ ext4 }    \
                       label{ openstack00 }                    \
                       mountpoint{ /openstack }                \
-              .                                               \
-              204800 1 204800 ext4                            \
-                      $lvmok{ } in_vg{ lxc }                  \
-                      lv_name{ nova00 }                       \
-                      method{ format } format{ }              \
-                      use_filesystem{ } filesystem{ ext4 }    \
-                      label{ nova }                           \
-                      mountpoint{ /var/lib/nova }             \
               .                                               \
               5120 1 5120 ext4                                \
                       $lvmok{ } in_vg{ lxc }                  \
