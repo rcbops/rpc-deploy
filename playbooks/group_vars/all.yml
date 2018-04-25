@@ -30,6 +30,13 @@ ipxe_repo: https://github.com/ipxe/ipxe.git
 ipxe_source_dir: /usr/src/ipxe
 
 images:
+  ubuntu-18.04-amd64:
+    image_type: "debian"
+    image_os: "ubuntu"
+    image-version: "bionic"
+    image_kernel_options: "auto=true priority=critical"
+    image_netboot_kernel_url: "http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/linux"
+    image_netboot_initrd_url: "http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/initrd.gz"
   ubuntu-16.04-amd64:
     image_type: "debian"
     image_os: "ubuntu"
