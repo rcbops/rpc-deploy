@@ -24,6 +24,7 @@ deploy_host_distro_packages:
   - python-software-properties
   - software-properties-common
   - vlan
+  - whois
 
 deploy_pxe_distro_packages:
   - tftpd-hpa

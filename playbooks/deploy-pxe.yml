@@ -105,6 +105,11 @@
         path: /var/www/pxe/deploy_key
         mode: 0644
 
+    - name: Generate SHA from root_console_password if set
+      shell: 'printf "{{ root_console_password }}" | mkpasswd -m sha-512 -s'
+      register: root_console_sha
+      when: root_console_password is defined
+
     - name: Generate MAC directories for all systems
       file:
         path: "/var/www/pxe/pxe/{{ item.value.mac | replace(':', '-') | lower }}"
