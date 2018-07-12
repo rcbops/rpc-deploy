@@ -8,6 +8,7 @@ host_cidr: "10.0.60.0/24"                        # Host Management Network CIDR
 obm_cidr: "10.0.50.0/24"                         # Out of Band Management Network CIDR (for DRAC/iLO)
 obm_user: "root"                                 # OBM User
 obm_password: "yoursecretpassword"               # OBM Password
+root_console_password: "yoursecretpassword"      # Sets root password for console login only, not SSH
 primary_nameserver: "8.8.8.8"                    # Primary Nameserver for Environment
 secondary_nameserver: "8.8.4.4"                  # Secondary Nameserver for Environment
 bios_mode: "UEFI"                                # BIOS Mode - UEFI or Legacy, used to pull different OS configs
