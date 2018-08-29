@@ -19,6 +19,11 @@ via the YAML inventory.
 
 ## Deployment Configuration
 
+Download the rpc-deploy repo
+
+    mkdir /opt/rpc-deploy/
+    git clone https://github.com/rcbops/rpc-deploy.git /opt/rpc-deploy/
+
 Copy the example config and create the deployment.yaml:
 
     cp configs/deployment.yaml.example configs/deployment.yaml
