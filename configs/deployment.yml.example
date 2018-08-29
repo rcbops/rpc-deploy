@@ -15,7 +15,7 @@ bios_mode: "UEFI"                                # BIOS Mode - UEFI or Legacy, u
 server_image: "ubuntu-16.04-amd64"               # Server_image to deploy to servers
 firmware_image: "utility"                        # firmware_image to load for firmware and utility operations
 systems_domain_name: "mydomain.com"              # Systems domain name
-tftp_server: 10.0.60.10                          # Set the primary tftp_server address
+tftp_server: 10.0.60.10                          # Set the primary tftp_server address - This should be the host ip of the deploy host
 
 # DHCP Server Settings
 # Settings for generating the DHCP Server configs 
