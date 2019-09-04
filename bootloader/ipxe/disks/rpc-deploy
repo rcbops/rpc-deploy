@@ -23,6 +23,8 @@ set preseed_repo https://raw.githubusercontent.com/rcbops/rpc-deploy/master/boot
 set rpc_deploy_utility_release 20180705180526-c046b33
 set config_mode github
 set git_url http://example.com/set/git/repo/location
+isset ${dhcp-server} && set ipparam ip=dhcp || set ipparam ip=${ip}::${gateway}:${netmask}:::none:${dns}
+set ipparam BOOTIF=${netX/mac} ${ipparam}
 
 :start
 echo ${bold}${fg_gre}rpc-deploy bootloader ${fg_whi}v${version}${boldoff}
@@ -123,7 +125,7 @@ goto menu
 :rhel7
 set rhel_base_url http://b13eae580cccdb02b66a-636e9e26d53f64913c9aaf599b409620.r60.cf2.rackcdn.com/rhel/7
 set rhel_arch x86_64
-kernel ${rhel_base_url}/os/${rhel_arch}/images/pxeboot/vmlinuz repo=${rhel_base_url}/os/${rhel_arch} initrd=initrd.img
+kernel ${rhel_base_url}/os/${rhel_arch}/images/pxeboot/vmlinuz repo=${rhel_base_url}/os/${rhel_arch} ${ipparam} initrd=initrd.img
 initrd ${rhel_base_url}/os/${rhel_arch}/images/pxeboot/initrd.img
 boot
 goto menu
