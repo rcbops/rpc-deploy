@@ -64,7 +64,7 @@ item local ${space} Boot from local hdd
 item --gap RPC-OpenStack Deployment Server
 item rpc_stein ${space} RPC-O 19.x (Stein)
 item --gap RedHat Installation
-item rhel7 ${space RHEL 7.7 Base Install
+item rhel7 ${space} RHEL 7.7 Base Install
 item --gap Configuration (deployment.yml)
 item change_mode ${space} Configuration Mode: ${config_mode}
 iseq ${config_mode} url && item --gap Deployment git repo URL: ${git_url} ||
