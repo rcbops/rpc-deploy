@@ -62,9 +62,11 @@ menu Rackspace Private Cloud Deployment System
 item --gap Default:
 item local ${space} Boot from local hdd
 item --gap RPC-OpenStack Deployment Server
-item rpc_stein ${space} RPC-O 19.x (Stein)
+item rpco_stein ${space} RPC-O 19.x (Stein) **DEV**
 item --gap RedHat Installation
-item rhel7 ${space} RHEL 7.7 Base Install
+item rhel7_base ${space} RHEL 7.7 Base Install (Manual)
+item rhel7_osp13_bm ${space} RHEL 7.7 w/ OSP 13 Director/Undercloud (Metal) **DEV**
+item rhel7_osp13_vm ${space} RHEL 7.7 w/ OSP 13 Director/Undercloud (VM) **DEV**
 item --gap Configuration (deployment.yml)
 item change_mode ${space} Configuration Mode: ${config_mode}
 iseq ${config_mode} url && item --gap Deployment git repo URL: ${git_url} ||
@@ -82,8 +84,7 @@ item shell ${space} iPXE shell
 item netinfo ${space} Network card info
 isset ${menu} && set timeout 0 || set timeout 300000
 choose --timeout ${timeout} --default ${menu} menu || goto localboot
-iseq ${menu} rpc_newton && set distro xenial && set playbook rpc-newton && goto rpc ||
-iseq ${menu} rpc_pike && set distro xenial && set playbook rpc-pike && goto rpc ||
+iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
 echo ${cls}
 goto ${menu} ||
 goto localboot
@@ -120,12 +121,25 @@ initrd http://${mirror}/${dir}/initrd.gz
 boot
 goto menu
 
+:rhel7_base
+set rhel_kickstart rhel7-base.cfg
+goto rhel7
+
+:rhel7_osp13_bm
+set rhel_kickstart rhel7-osp13-bm.cfg
+goto rhel7
+
+:rhel7_osp13_vm
+set rhel_kickstart rhel7-osp13-vm.cfg
+goto rhel7
+
 :rhel7
 set rhel_base_url http://b13eae580cccdb02b66a-636e9e26d53f64913c9aaf599b409620.r60.cf2.rackcdn.com/rhel/7
+set rhel_kickstart_base_url https://raw.githubusercontent.com/rcbops/rpc-deploy/master/bootloader/kickstarts
 set rhel_arch x86_64
 isset ${dhcp-server} && set ipparam ip=dhcp || set ipparam ip=${ip}::${gateway}:${netmask}:::none:${dns}
 set ipparam BOOTIF=${netX/mac} ${ipparam}
-kernel ${rhel_base_url}/os/${rhel_arch}/images/pxeboot/vmlinuz repo=${rhel_base_url}/os/${rhel_arch} ${ipparam} initrd=initrd.img
+kernel ${rhel_base_url}/os/${rhel_arch}/images/pxeboot/vmlinuz repo=${rhel_base_url}/os/${rhel_arch} ${ipparam} ks=${rhel_kickstart_base_url}/${rhel_kickstart} initrd=initrd.img
 initrd ${rhel_base_url}/os/${rhel_arch}/images/pxeboot/initrd.img
 boot
 goto menu
