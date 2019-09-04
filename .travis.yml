@@ -34,8 +34,7 @@ before_deploy:
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 deploy:
   provider: releases
-  api_key:
-    secure: "SfWYFswZbst3kMkqB3wgKSLtGwMYrVj5ZpuknqLNQoN6gF773pVRFE5w72LSlnMOlIIBGePodWymgoV0z50oSxjXKbC3dBZOkHDFpUeV4vzK7nZf7NLccW3G5yEDsCz0CPTSP/1GKvkV4hwgL/9YBVF/ZlT4S91W0NpDBlUWzFFHJ+m5UuR6wE67Ahlz5ezb0uRcrC/KMIYP5qK3Oo2t8DmO26So1dDLttGZ2s3U7++C4K+L/NnkR6lozJYJYfhe0WP67niXV7HaZ0YtpfNgvn6fKSqNEth1QPKMnjURrBxlKY/xo6MTK7BFvjLNbz/OHH9l7bKcd8/+dfdOPu0IP+OH55IlVs8uvwvCgzCQSxjfayPIg0Hd9M3lgIIyPqswIWmpcgjilIEw2ouq/1ztN1vKNKbn2sbmDVLjWckMOz6LviuIOrRPtDMuCJPm68W4P1nrMnpxmfVIW4E62Pca3JYrVOX71msHzlEq8NnWwIaYWlRk8slIReHAbj8IrNpZZVFLGpDNRb9BXJrD8Ja9BnjGT9m8s21bRXxptwJYmx9yAn0xocJDM8YA+WKjXTR5tZHZcDI90Qxs3oXu3W9TTrDF7xmgy2RQo+r41OwC9myEhP1rWUDjYRVzb4GUDhJz5InoTmuG/L1TDVZmpmCLqAWhrJUy61J+puG0fNVdvTE="
+  api_key: $GITHUB_OAUTH_TOKEN
   file:
   - rpc-deploy-bootloader.dsk
   - rpc-deploy-bootloader.iso
