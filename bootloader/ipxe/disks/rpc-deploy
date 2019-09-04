@@ -62,8 +62,9 @@ menu Rackspace Private Cloud Deployment System
 item --gap Default:
 item local ${space} Boot from local hdd
 item --gap RPC-OpenStack Deployment Server
-item rpc_pike ${space} RPC-O 16.x (Pike)
-item rpc_newton ${space} RPC-O 14.x (Newton)
+item rpc_stein ${space} RPC-O 19.x (Stein)
+item --gap RedHat Installation
+item rhel7 ${space RHEL 7.7 Base Install
 item --gap Configuration (deployment.yml)
 item change_mode ${space} Configuration Mode: ${config_mode}
 iseq ${config_mode} url && item --gap Deployment git repo URL: ${git_url} ||
@@ -116,6 +117,14 @@ isset config_mode github && set base_url https://raw.githubusercontent.com/${git
 isset config_mode url && set base_url ${git_url} ||
 kernel http://${mirror}/${dir}/linux ${netcfg} ${mirrorcfg} auto=true priority=critical preseed/url=${preseed_repo}/${playbook}-${distro}-preseed.cfg deploy_url=${base_url} playbook=${playbook} debian-installer/allow_unauthenticated_ssl=true
 initrd http://${mirror}/${dir}/initrd.gz
+boot
+goto menu
+
+:rhel7
+set rhel_base_url http://b13eae580cccdb02b66a-636e9e26d53f64913c9aaf599b409620.r60.cf2.rackcdn.com/rhel/7
+set rhel_arch x86_64
+kernel ${rhel_base_url}/os/${rhel_arch}/images/pxeboot/vmlinuz repo=${rhel_base_url}/os/${rhel_arch} initrd=initrd.img
+initrd ${rhel_base_url}/os/${rhel_arch}/images/pxeboot/initrd.img
 boot
 goto menu
 
