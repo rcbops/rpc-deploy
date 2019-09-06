@@ -25,7 +25,7 @@ after_success:
 - mv bin/ipxe.lkrn ../../artifacts/rpc-deploy-bootloader.lkrn
 - mv bin/ipxe.usb ../../artifacts/rpc-deploy-bootloader.usb
 - mv bin/ipxe.kpxe ../../artifacts/rpc-deploy-bootloader.kpxe
-- mv bin/undionly.kpxe ../../artifacts/rpc-deploy-ipxe-bootloader.kpxe
+- mv bin/undionly.kpxe ../../artifacts/rpc-deploy-bootloader.kpxe
 - mkdir -p efi_tmp
 - dd if=/dev/zero of=efi_tmp/ipxe.img count=2880
 - mformat -i efi_tmp/ipxe.img -m 0xf8 -f 2880
@@ -33,7 +33,7 @@ after_success:
 - mcopy -i efi_tmp/ipxe.img bin-x86_64-efi/ipxe.efi ::efi/boot/bootx64.efi
 - genisoimage -o ipxe.eiso -eltorito-alt-boot -e ipxe.img -no-emul-boot efi_tmp
 - mv bin-x86_64-efi/ipxe.efi ../../artifacts/rpc-deploy-bootloader.efi
-- mv ipxe.eiso ../../artifacts/rpc-deploy-ipxe-bootloader-efi.iso
+- mv ipxe.eiso ../../artifacts/rpc-deploy-bootloader-efi.iso
 - cd ../../artifacts
 before_deploy:
   # Set up git user name and tag this commit
