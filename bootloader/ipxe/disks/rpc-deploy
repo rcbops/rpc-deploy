@@ -20,7 +20,7 @@ set github_branch master
 set mirror mirror.rackspace.com
 set mirror_base_dir /ubuntu/
 set preseed_repo https://raw.githubusercontent.com/rcbops/rpc-deploy/master/bootloader/preseeds
-set rpc_deploy_utility_release 20180705180526-c046b33
+set rpc_deploy_utility_release 20190905231128-3843aaa
 set config_mode github
 set git_url http://example.com/set/git/repo/location
 
