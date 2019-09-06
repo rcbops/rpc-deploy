@@ -51,6 +51,7 @@ deploy:
   - rpc-deploy-bootloader.kpxe
   - rpc-deploy-bootloader.kpxe
   - rpc-deploy-bootloader.efi
+  - rpc-deploy-bootloader-efi.iso
   on:
     repo: rcbops/rpc-deploy
   skip_cleanup: true
