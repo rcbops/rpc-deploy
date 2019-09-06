@@ -20,7 +20,6 @@ set github_branch master
 set mirror mirror.rackspace.com
 set mirror_base_dir /ubuntu/
 set preseed_repo https://raw.githubusercontent.com/rcbops/rpc-deploy/master/bootloader/preseeds
-set rpc_deploy_utility_release 20190905231128-3843aaa
 set config_mode github
 set git_url http://example.com/set/git/repo/location
 
@@ -164,9 +163,9 @@ iseq ${utility_playbook} obm && set obm_params obm_ip=${obm_ip} obm_nm=${obm_nm}
 imgfree
 echo Loading the Utility Live OS image in ${utility_playbook} mode:
 echo
-kernel https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/vmlinuz
-initrd https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/initrd.img
-imgargs vmlinuz root=live:https://github.com/rcbops/rpc-deploy-utility-image/releases/download/${rpc_deploy_utility_release}/rootfs.img nomodeset rd.writable.fsimg rd.shell enforcing=0 BOOTIF=${netX/mac} ip=dhcp role=logging playbook=${utility_playbook} initrd=initrd.img ${obm_params}
+kernel https://github.com/rcbops/rpc-deploy-utility-image/releases/latest/download/vmlinuz
+initrd https://github.com/rcbops/rpc-deploy-utility-image/releases/latest/download/initrd.img
+imgargs vmlinuz root=live:https://github.com/rcbops/rpc-deploy-utility-image/releases/latest/download/rootfs.img nomodeset rd.writable.fsimg rd.shell enforcing=0 BOOTIF=${netX/mac} ip=dhcp role=logging playbook=${utility_playbook} initrd=initrd.img ${obm_params}
 boot
 goto menu
 
