@@ -64,8 +64,8 @@ item --gap RPC-OpenStack Deployment Server
 item rpco_stein ${space} RPC-O 19.x (Stein) **DEV**
 item --gap RedHat Installation
 item rhel7_base ${space} RHEL 7.7 Base Install (Manual)
-item rhel7_osp13_bm ${space} RHEL 7.7 w/ OSP 13 Director/Undercloud (Metal) **DEV**
-item rhel7_osp13_vm ${space} RHEL 7.7 w/ OSP 13 Director/Undercloud (VM) **DEV**
+item rhel7_osp13_bm ${space} RHEL 7.7 w/ OSP 13 Director (Metal) **DEV**
+item rhel7_osp13_vm ${space} RHEL 7.7 w/ OSP 13 Director (VM) **DEV**
 item --gap Configuration (deployment.yml)
 item change_mode ${space} Configuration Mode: ${config_mode}
 iseq ${config_mode} url && item --gap Deployment git repo URL: ${git_url} ||
@@ -78,6 +78,7 @@ item --gap Hardware Prep
 item obm ${space} Configure Out of Band Management
 item firmware ${space} Update Server Firmware
 item --gap Tools
+item lldp ${space} LLDP Network Information
 item debug ${space} Load Utility Image (debug)
 item shell ${space} iPXE shell
 item netinfo ${space} Network card info
@@ -158,6 +159,7 @@ goto utility
 :utility
 :firmware
 :debug
+:lldp
 set utility_playbook ${menu}
 iseq ${utility_playbook} obm && set obm_params obm_ip=${obm_ip} obm_nm=${obm_nm} obm_gw=${obm_gw} obm_usr=${obm_usr} obm_pw=${obm_pw} ||
 imgfree
