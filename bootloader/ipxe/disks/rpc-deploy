@@ -11,7 +11,6 @@ set fg_gre ${esc:string}[32m
 set fg_cya ${esc:string}[36m
 set fg_whi ${esc:string}[37m
 set version 1.00
-set menu_url https://raw.githubusercontent.com/rcbops/rpc-deploy/master/bootloader/menu.ipxe
 set space:hex 20:20
 set space ${space:string}
 set github_user rcbops
@@ -58,15 +57,16 @@ goto ${failsafe_choice}
 :menu
 clear menu
 menu Rackspace Private Cloud Deployment System
-item --gap Default:
+item --gap Default boot:
 item local ${space} Boot from local hdd
-item --gap RPC-OpenStack Deployment Server
-item rpco_stein ${space} RPC-O 19.x (Stein) **DEV**
-item --gap RedHat Installation
-item rhel7_base ${space} RHEL 7.7 Base Install (Manual)
-item rhel7_osp13_bm ${space} RHEL 7.7 w/ OSP 13 Director (Metal) **DEV**
-item rhel7_osp13_vm ${space} RHEL 7.7 w/ OSP 13 Director (VM) **DEV**
-item --gap Configuration (deployment.yml)
+item --gap Installs
+item rpco ${space} RPC-O (DEV)
+item rpcr ${space} RPC-R
+item --gap Hardware Prep
+item obm ${space} Configure Out of Band Management (DEV)
+item lldp ${space} Get LLDP Network Information
+item firmware ${space} Update Server Firmware (DEV)
+item --gap Configurations
 item change_mode ${space} Configuration Mode: ${config_mode}
 iseq ${config_mode} url && item --gap Deployment git repo URL: ${git_url} ||
 iseq ${config_mode} url && item set_config_url ${space} Set git repo URL ||
@@ -74,17 +74,37 @@ iseq ${config_mode} github && item --gap Deployment Repo on Github - /${github_u
 iseq ${config_mode} github && item github_user ${space} Github User [ ${github_user} ] ||
 iseq ${config_mode} github && item github_repo_name ${space} Github Repo Name [ ${github_repo} ] ||
 iseq ${config_mode} github && item github_branch ${space} Github Branch [ ${github_branch} ] ||
-item --gap Hardware Prep
-item obm ${space} Configure Out of Band Management
-item firmware ${space} Update Server Firmware
 item --gap Tools
-item lldp ${space} LLDP Network Information
 item debug ${space} Load Utility Image (debug)
 item shell ${space} iPXE shell
 item netinfo ${space} Network card info
 item latest ${space} Load latest rpc-deploy-bootloader
 isset ${menu} && set timeout 0 || set timeout 300000
 choose --timeout ${timeout} --default ${menu} menu || goto localboot
+iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
+echo ${cls}
+goto ${menu} ||
+goto localboot
+
+:rpco
+menu RPC-O Installs
+item --gap RPC-O Deployment Server
+item rpco_stein ${space} RPC-O 19.x (Stein) **DEV**
+isset ${menu} && set timeout 0 || set timeout 300000
+choose --timeout ${timeout} --default ${menu} menu || exit
+iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
+echo ${cls}
+goto ${menu} ||
+goto localboot
+
+:rpcr
+menu RPC-R Installs
+item --gap RPC-R Installations
+item rhel7_base ${space} RHEL 7.7 Base Install (Manual)
+item rhel7_osp13_bm ${space} RHEL 7.7 w/ OSP 13 Director (Metal) **DEV**
+item rhel7_osp13_vm ${space} RHEL 7.7 w/ OSP 13 Director (VM) **DEV**
+isset ${menu} && set timeout 0 || set timeout 300000
+choose --timeout ${timeout} --default ${menu} menu || exit
 iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
 echo ${cls}
 goto ${menu} ||
