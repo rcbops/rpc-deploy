@@ -82,6 +82,7 @@ item lldp ${space} LLDP Network Information
 item debug ${space} Load Utility Image (debug)
 item shell ${space} iPXE shell
 item netinfo ${space} Network card info
+item latest ${space} Load latest rpc-deploy-bootloader
 isset ${menu} && set timeout 0 || set timeout 300000
 choose --timeout ${timeout} --default ${menu} menu || goto localboot
 iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
@@ -206,6 +207,16 @@ goto start
 
 :reboot
 reboot
+goto start
+
+:latest
+echo Retrieving latest rpc-deploy bootloader...
+iseq ${platform} efi && goto latest_efi || goto latest_legacy
+:latest_efi
+chain --autofree https://github.com/rcbops/rpc-deploy-utility-image/releases/latest/download/rpc-deploy-bootloader.efi ||
+goto start
+:latest_legacy
+chain --autofree https://github.com/rcbops/rpc-deploy-utility-image/releases/latest/download/rpc-deploy-bootloader.lkrn ||
 goto start
 
 :debug
