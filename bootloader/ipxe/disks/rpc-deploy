@@ -213,10 +213,10 @@ goto start
 echo Retrieving latest rpc-deploy bootloader...
 iseq ${platform} efi && goto latest_efi || goto latest_legacy
 :latest_efi
-chain --autofree https://github.com/rcbops/rpc-deploy-utility-image/releases/latest/download/rpc-deploy-bootloader.efi ||
+chain --autofree https://github.com/rcbops/rpc-deploy/releases/latest/download/rpc-deploy-bootloader.efi ||
 goto start
 :latest_legacy
-chain --autofree https://github.com/rcbops/rpc-deploy-utility-image/releases/latest/download/rpc-deploy-bootloader.lkrn ||
+chain --autofree https://github.com/rcbops/rpc-deploy/releases/latest/download/rpc-deploy-bootloader.lkrn ||
 goto start
 
 :debug
