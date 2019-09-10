@@ -89,8 +89,8 @@ goto localboot
 :rpco
 menu RPC-O Installs
 item --gap Base OS Installs
-item xenial Ubuntu 16.04 LTS (Manual)
-item bionic Ubuntu 18.04 LTS (Manual)
+item xenial ${space} Ubuntu 16.04 LTS (Manual)
+item bionic ${space} Ubuntu 18.04 LTS (Manual)
 item --gap RPC-O OSA Installs
 item rpco_stein ${space} RPC-O 19.x (Stein) **DEV**
 isset ${menu} && set timeout 0 || set timeout 300000
@@ -145,7 +145,7 @@ isset config_mode url && set base_url ${git_url} ||
 set mirrorcfg mirror/suite=${distro} mirror/country=manual mirror/http/hostname=${mirror} mirror/http/directory=${mirror_base_dir}
 set netcfg netcfg/get_ipaddress=${netX/ip} netcfg/get_netmask=${netX/netmask} netcfg/get_gateway=${netX/gateway} netcfg/get_nameservers=${dns} netcfg/disable_autoconfig=true
 set dir ubuntu/dists/${distro}-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64
-kernel http://${mirror}/${dir}/linux ${netcfg} ${mirrorcfg} auto=true priority=critical preseed/url=${preseed_repo}/${playbook}-${distro}-preseed.cfg deploy_url=${base_url} playbook=${playbook} debian-installer/allow_unauthenticated_ssl=true
+kernel http://${mirror}/${dir}/linux ${netcfg} ${mirrorcfg} auto=true priority=critical preseed/url=${preseed_repo}/${playbook}-${distro}-preseed.cfg deploy_url=${base_url} playbook=${playbook} debian-installer/allow_unauthenticated_ssl=true initrd=initrd.gz
 initrd http://${mirror}/${dir}/initrd.gz
 boot
 goto menu
