@@ -59,7 +59,7 @@ clear menu
 menu Rackspace Private Cloud Deployment System
 item --gap Default boot:
 item local ${space} Boot from local hdd
-item --gap Installs
+item --gap Product Installs
 item rpco ${space} RPC-O (DEV)
 item rpcr ${space} RPC-R
 item --gap Utility Image Actions
