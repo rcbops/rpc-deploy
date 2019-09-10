@@ -88,10 +88,15 @@ goto localboot
 
 :rpco
 menu RPC-O Installs
-item --gap RPC-O Deployment Server
+item --gap Base OS Installs
+item xenial Ubuntu 16.04 LTS (Manual)
+item bionic Ubuntu 18.04 LTS (Manual)
+item --gap RPC-O OSA Installs
 item rpco_stein ${space} RPC-O 19.x (Stein) **DEV**
 isset ${menu} && set timeout 0 || set timeout 300000
 choose --timeout ${timeout} --default ${menu} menu || goto menu
+iseq ${menu} bionic && set distro bionic && goto bionic ||
+iseq ${menu} xenial && set distro xenial && goto xenial ||
 iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
 echo ${cls}
 goto ${menu} ||
@@ -99,10 +104,11 @@ goto menu
 
 :rpcr
 menu RPC-R Installs
-item --gap RPC-R Installations
-item rhel7_base ${space} RHEL 7.7 Base Install (Manual)
-item rhel7_osp13_bm ${space} RHEL 7.7 w/ OSP 13 Director (Metal) **DEV**
-item rhel7_osp13_vm ${space} RHEL 7.7 w/ OSP 13 Director (VM) **DEV**
+item --gap Base OS Installs
+item rhel7_base ${space} RHEL 7.7 (Manual)
+item --gap RHEL 7.7 Director/Undercloud
+item rhel7_osp13_bm ${space} OSP 13 Director (Metal) **DEV**
+item rhel7_osp13_vm ${space} OSP 13 Director (VM) **DEV**
 isset ${menu} && set timeout 0 || set timeout 300000
 choose --timeout ${timeout} --default ${menu} menu || goto menu
 iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
@@ -132,11 +138,13 @@ goto menu
 
 :rpc
 imgfree
+isset config_mode github && set base_url https://raw.githubusercontent.com/${github_user}/${github_repo}/${github_branch} ||
+isset config_mode url && set base_url ${git_url} ||
+:bionic
+:xenial
 set mirrorcfg mirror/suite=${distro} mirror/country=manual mirror/http/hostname=${mirror} mirror/http/directory=${mirror_base_dir}
 set netcfg netcfg/get_ipaddress=${netX/ip} netcfg/get_netmask=${netX/netmask} netcfg/get_gateway=${netX/gateway} netcfg/get_nameservers=${dns} netcfg/disable_autoconfig=true
 set dir ubuntu/dists/${distro}-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64
-isset config_mode github && set base_url https://raw.githubusercontent.com/${github_user}/${github_repo}/${github_branch} ||
-isset config_mode url && set base_url ${git_url} ||
 kernel http://${mirror}/${dir}/linux ${netcfg} ${mirrorcfg} auto=true priority=critical preseed/url=${preseed_repo}/${playbook}-${distro}-preseed.cfg deploy_url=${base_url} playbook=${playbook} debian-installer/allow_unauthenticated_ssl=true
 initrd http://${mirror}/${dir}/initrd.gz
 boot
