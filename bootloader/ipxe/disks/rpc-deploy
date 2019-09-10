@@ -62,10 +62,11 @@ item local ${space} Boot from local hdd
 item --gap Installs
 item rpco ${space} RPC-O (DEV)
 item rpcr ${space} RPC-R
-item --gap Hardware Prep
-item obm ${space} Configure Out of Band Management (DEV)
-item lldp ${space} Get LLDP Network Information
-item firmware ${space} Update Server Firmware (DEV)
+item --gap Utility Image Actions
+item obm ${space} Configure Out of Band Management *DEV*
+item lldp ${space} Get LLDP Info
+item firmware ${space} Firmware Update *DEV*
+item debug ${space} Load Utility Debug
 item --gap Configurations
 item change_mode ${space} Configuration Mode: ${config_mode}
 iseq ${config_mode} url && item --gap Deployment git repo URL: ${git_url} ||
@@ -75,10 +76,9 @@ iseq ${config_mode} github && item github_user ${space} Github User [ ${github_u
 iseq ${config_mode} github && item github_repo_name ${space} Github Repo Name [ ${github_repo} ] ||
 iseq ${config_mode} github && item github_branch ${space} Github Branch [ ${github_branch} ] ||
 item --gap Tools
-item debug ${space} Load Utility Image (debug)
 item shell ${space} iPXE shell
 item netinfo ${space} Network card info
-item latest ${space} Load latest rpc-deploy-bootloader
+item latest ${space} Reload into latest bootloader
 isset ${menu} && set timeout 0 || set timeout 300000
 choose --timeout ${timeout} --default ${menu} menu || goto localboot
 iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
