@@ -91,11 +91,11 @@ menu RPC-O Installs
 item --gap RPC-O Deployment Server
 item rpco_stein ${space} RPC-O 19.x (Stein) **DEV**
 isset ${menu} && set timeout 0 || set timeout 300000
-choose --timeout ${timeout} --default ${menu} menu || exit
+choose --timeout ${timeout} --default ${menu} menu || goto menu
 iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
 echo ${cls}
 goto ${menu} ||
-goto localboot
+goto menu
 
 :rpcr
 menu RPC-R Installs
@@ -104,11 +104,11 @@ item rhel7_base ${space} RHEL 7.7 Base Install (Manual)
 item rhel7_osp13_bm ${space} RHEL 7.7 w/ OSP 13 Director (Metal) **DEV**
 item rhel7_osp13_vm ${space} RHEL 7.7 w/ OSP 13 Director (VM) **DEV**
 isset ${menu} && set timeout 0 || set timeout 300000
-choose --timeout ${timeout} --default ${menu} menu || exit
+choose --timeout ${timeout} --default ${menu} menu || goto menu
 iseq ${menu} rpco_stein && set distro bionic && set playbook rpco-stein && goto rpc ||
 echo ${cls}
 goto ${menu} ||
-goto localboot
+goto menu
 
 :change_mode
 iseq ${config_mode} url && set config_mode github || set config_mode url
