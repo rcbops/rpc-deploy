@@ -19,6 +19,7 @@ set github_branch master
 set mirror mirror.rackspace.com
 set mirror_base_dir /ubuntu/
 set preseed_repo https://raw.githubusercontent.com/rcbops/rpc-deploy/master/bootloader/preseeds
+set rhel_base_url http://b13eae580cccdb02b66a-636e9e26d53f64913c9aaf599b409620.r60.cf2.rackcdn.com/rhel/7
 set config_mode github
 set git_url http://example.com/set/git/repo/location
 
@@ -157,15 +158,14 @@ set kickstart_url ks=${rhel_kickstart_base_url}/rhel7-base.cfg
 goto rhel7
 
 :rhel7_osp13_bm
-et kickstart_url ks=${rhel_kickstart_base_url}/rhel7-osp13-bm.cfg
+set kickstart_url ks=${rhel_kickstart_base_url}/rhel7-osp13-bm.cfg
 goto rhel7
 
 :rhel7_osp13_vm
-et kickstart_url ks=${rhel_kickstart_base_url}/rhel7-osp13-vm.cfg
+set kickstart_url ks=${rhel_kickstart_base_url}/rhel7-osp13-vm.cfg
 goto rhel7
 
 :rhel7
-set rhel_base_url http://b13eae580cccdb02b66a-636e9e26d53f64913c9aaf599b409620.r60.cf2.rackcdn.com/rhel/7
 set rhel_kickstart_base_url https://raw.githubusercontent.com/rcbops/rpc-deploy/master/bootloader/kickstarts
 set rhel_arch x86_64
 isset ${dhcp-server} && set ipparam ip=dhcp || set ipparam ip=${ip}::${gateway}:${netmask}:::none:${dns}
